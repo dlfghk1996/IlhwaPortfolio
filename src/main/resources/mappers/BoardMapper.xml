@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="BoardMapper">
+	
+	<!-- writeContent -->
+	<insert id="postContent" parameterType="com.kim.ilhwaportfolio.dto.Board">
+		<selectKey keyProperty="boardnum" resultType="int">
+			SELECT boardnum_pk.CURRVAL AS boardnum FROM DUAL
+		</selectKey>
+	INSERT INTO BOARD VALUES(boardnum_pk.NEXTVAL, #{subject},#{content},#{img},#{writer},#{writerid},#{pwd},sysdate,sysdate,0,0)
+	</insert>
+	
+	<!-- GetBoardList -->
+	<select id="contentList" resultType="com.kim.ilhwaportfolio.dto.Board">
+		SELECT * FROM (
+		select rownum as rnum, a.* from (
+		SELECT boardnum,b.subject,name as writerid,b.regdate,b.readnum FROM board b LEFT JOIN member m ON b.writer = m.membernum 
+		<include refid="searchSQL"/>
+		order by boardnum desc)a)c
+		where rnum <![CDATA[>=]]> ${start} and rnum <![CDATA[<=]]>  ${end}
+	</select>
+	
+	<!--<sql id="searchSQL">
+		WHERE subject LIKE '%${search}%'
+	</sql>-->
+	<!-- sql code 조각-->
+	<!-- 반복되는 sql의 일부를 sql태그를 이용하여 따로 뺴돌수 있다 -->
+	<sql id="searchSQL">
+		<if test= 'search != null &amp;&amp; !search.equals("")'>
+			<choose>
+			<!-- 전체 검색 -->
+		      <when test='keyword == "all"'>
+		          WHERE writerid LIKE '%${search}%'
+		          OR subject LIKE '%${search}%'
+		      </when> 
+		      <otherwise>
+		          WHERE ${keyword} LIKE '%${search}%'
+		      </otherwise>
+	   		</choose>
+	   </if> 
+	</sql>
+	<!-- viewContent -->	
+	<select id="viewContent" parameterType="int"  resultType="com.kim.ilhwaportfolio.dto.Board">
+		SELECT * FROM board where boardnum = ${value}
+	</select>
+	
+	<!-- prev next -->
+	<select id="prevNext" parameterType="int"  resultType="java.util.HashMap">
+		select * from (
+			select boardnum, 
+			lead(boardnum,1) over(order by boardnum) as next,
+			lead(subject,1) over(order by subject) as nextsubject,
+			lag(boardnum,1) over(order by boardnum) as prev,
+			lag(subject,1) over(order by subject) as prevsubject
+			from board )where boardnum = ${value}
+	</select>
+	
+	<!-- nonMember pwchk for updateContent -->
+	<select id="nonMemberPwChk" resultType="com.kim.ilhwaportfolio.dto.Board">
+		SELECT * FROM board WHERE pwd = #{pwd} AND boardnum = ${boardnum}
+	</select>
+		
+	<!-- 페이지 네이션: 게시글 전체 수 -->
+	<select id="totalContent" resultType="int">
+		SELECT count(*) FROM board 
+	</select>
+	
+	<!--updateContent -->
+	<update id="updateContent">
+		UPDATE board SET subject = #{subject}, content = #{content},edidate=sysdate  WHERE boardnum = #{boardnum}
+	</update>
+	
+	<!-- updateReadNum -->
+	<update id="updateReadNum">
+		UPDATE board SET readnum = readnum+1 WHERE boardnum = #{boardnum}
+	</update>
+	
+	<!-- 파일 첨부 -->
+	<insert id="attachFile" parameterType="com.kim.ilhwaportfolio.dto.BoardFile">
+		INSERT INTO boardfile VALUES(filenum_pk.NEXTVAL,#{boardnum},#{originalfilename},#{filepath},#{filetype})
+	</insert>
+	
+	<!-- 첨부파일 불러오기 -->
+	<select id="attachFileList" resultType="com.kim.ilhwaportfolio.dto.BoardFile"  parameterType="int">
+		SELECT * FROM boardfile WHERE boardnum = ${value}
+	</select>
+	
+	<!-- 첨부 파일 삭제 -->
+	<delete id="attachFileDelete" >
+		DELETE FROM boardfile WHERE filepath = #{filepath}
+	</delete>
+</mapper>

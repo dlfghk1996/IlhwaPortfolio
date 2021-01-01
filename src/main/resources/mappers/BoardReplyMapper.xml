@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="BoardReplyMapper">
+	
+	<!-- write Reply -->
+	<insert id="addReply" parameterType="com.kim.ilhwaportfolio.dto.Board_reply">
+		 <selectKey keyProperty="replynum" resultType="int">
+			SELECT replynum_pk.CURRVAL AS boardreply FROM DUAL
+		</selectKey>
+	INSERT INTO boardreply VALUES(replynum_pk.NEXTVAL,#{reply_boardnum},#{parent},#{seq},#{depth},#{reply},#{reply_writer},#{reply_writer_nickname},#{reply_password},SYSDATE)
+	</insert>
+	
+	<!-- get ReplyList -->
+	<select id="getReplyList" parameterType="int" resultType="com.kim.ilhwaportfolio.dto.Board_reply">
+		SELECT * FROM boardreply WHERE reply_boardnum = ${value} ORDER BY seq ASC
+	</select>
+	
+	<!-- Password Check -->
+	<select id="replyPwCheck" resultType="com.kim.ilhwaportfolio.dto.Board_reply" >
+		SELECT * FROM boardreply WHERE replynum = #{replynum} AND reply_password =#{reply_password}
+	</select>
+	
+	<!-- update Reply -->
+	<update id="replyUpdate" >
+		UPDATE boardreply SET reply = #{reply}, regdate = sysdate  WHERE replynum = #{replynum}
+	</update>
+	
+	<!-- delete Reply -->
+	<delete id="replyDelete" >
+    	DELETE FROM boardreply WHERE replynum = #{replynum} OR parent = #{replynum}
+	</delete>
+	
+	<!-- Update replySeq-->
+	<select id="replyMaxSeq" resultType="int" parameterType="int" >
+		 SELECT NVL(MAX(Seq),0)+1 FROM boardreply WHERE reply_boardnum=${value}
+	</select>
+	
+	<!-- replyGetDepth -->
+	<select id="replyGetDepth" resultType="com.kim.ilhwaportfolio.dto.Board_reply" parameterType="int" >
+		SELECT depth+1 as depth, seq+1 as seq FROM boardreply WHERE replynum= ${value}
+	</select>
+	
+	
+	<!-- replySeqUpdate
+	           기존 순번과 새로운 순번이 같거나 새로운 순번이 더 크다면 기존순번에 +1을 해준다.-->
+	<update id="replySeqUpdate" >
+		UPDATE boardreply SET seq= seq+1 WHERE reply_boardnum=#{reply_boardnum} and seq>=#{seq}
+	</update>
+
+   <!-- Update Seq After Delete 
+   		댓글 삭제 후 기본 순번 재정렬 -->
+	<update id="deleteReplySeqUpdate" >
+		UPDATE
+		    (
+		    select replyTB1.seq 
+		    from boardreply replyTB1,boardreply replyTB2 
+		    where replyTB1.replynum = replyTB2.replynum
+		    AND replyTB1.reply_BOARDNUM = #{reply_boardnum}
+		 )
+		SET seq  = seq-1
+		where seq <![CDATA[>]]>  #{seq}
+	</update>
+	
+	<!-- getReplyChildren : 댓글 삭제 전에 자식댓글있는지 확인 -->
+		<!-- replyGetDepth -->
+	<select id="getReplyChildren" resultType="int" >
+		SELECT count(*) FROM boardreply WHERE 
+		<choose> 
+		    <when test= 'reply_writer != null &amp;&amp; !search.equals("")'>
+		    	depth <![CDATA[>]]> (SELECT depth FROM boardreply where replynum =  #{replynum} )
+			</when>
+			<otherwise>
+				depth > #{depth}
+			</otherwise>
+		</choose>
+		and parent =  #{replynum} 
+	</select>
+</mapper>
