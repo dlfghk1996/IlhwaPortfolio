@@ -1,9 +1,4 @@
-
-
-	//댓글 목록 함수 호출 
-	getReplies("replyList");
-	
-	// 댓글 ( 수정/삭제 ) 비밀번호 팝업
+	// 댓글 (수정/삭제) 비밀번호 팝업
 	$(document).ready(function(){
 		$(document).on('click', '.passwordChkBtn', function(e) {
 			if($(this).data('toggle') == ''){
@@ -133,7 +128,7 @@
 		}); 
 	});
 
-    //댓글 수정 취소
+    // 댓글 수정 취소
 
 	// 댓글등록
 	$('#replyBtn').click(function(){
@@ -166,7 +161,6 @@
   	});
 	
 	// 대댓글 입력창
-	//대댓글 입력창
 	$(document).on('click', '.replyReplyBtn', function() {
 		var replynum = $(this).parent().data('idx');
 		$("input[name='parent']").val(replynum);
@@ -183,16 +177,15 @@
 		 	}); 
 		}
 
-
 	// 댓글 목록 출력 함수 
 	function printReplies(replyArr) {
-		if(replyArr.replyList.length == 0 ){
-			$("#replyprint").append("<h1>존재하는 댓글이 없습니다.</h1>");
-			return;
+		if(replyArr.replyList.length == 0){
+			console.log("조회 댓글 없음")
+		} else {
+		// 핸들바 사용순서 : 핸들바 템플릿을 가져온다. -> 핸들바 템플릿을 컴파일한다.
+		var replyTemplate = Handlebars.compile($("#reply-Template").html());
+		var result = replyTemplate(replyArr.replyList);
+		$("#replyprint li:last-child").remove();
+		$("#replyprint").append(result);
 		}
-		// 핸들바 사용순서 :  핸들바 템플릿을 가져온다. -> 핸들바 템플릿을 컴파일한다.
-		var replyTemplate = Handlebars.compile($("#reply-Template").html()); 
-		var result = replyTemplate(replyArr.replyList); 
-		$("#replyprint li:last-child").remove(); 
-		$("#replyprint").append(result); 
 	}

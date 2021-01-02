@@ -14,7 +14,7 @@
 	<!-- GetBoardList -->
 	<select id="contentList" resultType="com.kim.ilhwaportfolio.dto.Board">
 		SELECT * FROM (
-		select rownum as rnum, a.* from (
+		SELECT rownum as rnum, a.* from (
 		SELECT boardnum,b.subject,name as writerid,b.regdate,b.readnum FROM board b LEFT JOIN member m ON b.writer = m.membernum 
 		<include refid="searchSQL"/>
 		order by boardnum desc)a)c

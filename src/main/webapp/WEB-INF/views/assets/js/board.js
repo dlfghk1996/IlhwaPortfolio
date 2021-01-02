@@ -98,6 +98,4 @@ $(document).ready(function() {
     		$('#form-nonMember-PwChk').submit();
     	}
   	});
-  	
-
  });

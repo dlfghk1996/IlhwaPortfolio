@@ -1,35 +1,28 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
 <link  rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atma:wght@500&display=swap">
- <link rel="stylesheet" href="assets/css/common.css" type="text/css">
- 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
-<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap-theme.min.css" crossorigin="anonymous">
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap-theme.min.css">
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-<script src="https://kit.fontawesome.com/58a77f3783.js" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.7.6/handlebars.min.js"></script>
-<script type="text/javascript">
- 	var boardnum = "<c:out value='${board.boardnum}'/>";
-</script>
+<link rel="stylesheet" href="assets/css/common.css" type="text/css">
+<title>boardView</title>
 
-<title>Insert title here</title>
 <style type="text/css">
-	.container-fluid{width : 1200px;}
-	.contentInfo2 li {display: inline-block;}
-	.contentInfo1 {float: left; width: 80%; text-align: left;}
-	h1, h3{text-align: left;}
+	.container-fluid {width : 1200px;}
+	.contentInfo2 li {display : inline-block;}
+	.contentInfo1 {float : left; width : 80%; text-align : left;}
+	h1, h3 {text-align : left;}
 	input {width : 100%;}
-	.comment {margin-top: 30px;;}
-	#reply {	border-bottom: 1px solid lightgrey; padding: 15px 0;}
-   .reply-reply-box{ background-color: #d3d3d330; float: left; width: 100%; padding: 0 50px 0 100px; }
+	.comment {margin-top : 30px;;}
+	#reply {border-bottom : 1px solid lightgrey; padding : 15px 0;}
+   .reply-reply-box {background-color : #d3d3d330; float : left; width : 100%; padding : 0 50px 0 100px;}
 </style>
+
 </head>
+
 <body>
 <%@ include file="../include/header.jsp" %>
 <div class="container-fluid text-center">
@@ -41,7 +34,7 @@
 				 <div class="panel-heading">
 				 	<h3>${board.subject}</h3>
 				 	<div class="contentInfo1">
-				 		<span>	작성자이름   &nbsp;  | ${board.regdate}</span>
+				 		<span>작성자이름   &nbsp; | ${board.regdate}</span>
 				 	</div>
 				 	<div class="contentInfo2">
 				 		<ul>
@@ -65,8 +58,8 @@
       			 	<p>${board.content}</p>	
       			 </div>
       			
-				 <c:if test="${members.membernum eq board.writer && not empty members.membernum }">
-				 	<button type="button" class="btn btn-success pull-righ t"  onclick="location.href='boardUpdate?boardnum=${board.boardnum}'" >글 수정</button>
+				 <c:if test="${members.membernum eq board.writer && not empty members.membernum}">
+				 	<button type="button" class="btn btn-success pull-righ t" onclick="location.href='boardUpdate?boardnum=${board.boardnum}'">글 수정</button>
 				 	<button>글 삭제</button>
 				 </c:if>
 				  <!-- 비회원 일경우  비밀번호 입력-->
@@ -77,7 +70,7 @@
 			</div>						
 		</div>
 	</div>
-	  <!-- Modal -->
+	<!-- Modal -->
 	<div class="modal fade" id="modal-nonMember-PwChk" role="dialog">
     	<div class="modal-dialog">
 		<!-- Modal content-->
@@ -128,27 +121,36 @@
 		</div>
 	</form>
 	<div class="clear"></div>
-
-	<ul id="replyprint">	
+	
+	<ul id="replyprint">
 	<script id="reply-Template" type="text/x-handlebars-template">
-		{{#each.}}
-			<li class="reply row" data-depth ="{{depth}}" style="margin-left: calc(20px*{{depth}});">
-				<div class="writerbox col-xs-3">
-						<span>{{reply_writer_nickname}} </span>					
+	{{#each.}}
+		<li class="reply row" data-depth ="{{depth}}" style="margin-left: calc(20px*{{depth}});">
+			<div class="writerbox col-xs-3"><span>{{reply_writer_nickname}}</span></div>
+			<div class="col-xs-7 reply{{@key}} replyText">{{reply}}</div>
+			<div class="col-xs-2">
+				<div>{{regdate}}</div>
+				<div id="test" class="replyoOptionBox{{@key}}" data-idx="{{replynum}}">
+				<c:choose>
+					<c:when test="${empty members.membernum}">
+						<button type="button" value="update" class="btn btn-primary passwordChkBtn update" data-key="{{@key}}" data-idx="{{replynum}}" data-toggle="${members.membernum eq 0? 'popover': ''}">수정</button>
+						<button type="button" value="delete" class="passwordChkBtn delete" data-key="{{@key}}" data-idx="{{replynum}}" data-toggle="popover">삭제</button>
+					</c:when>
+					<c:when test="${members.membernum eq {{reply_writer}}}">
+						<button>내 글 수정</button>
+					</c:when>
+					<c:otherwise>
+
+					</c:otherwise>
+				</c:choose>
+					<button type="button" class="replyReplyBtn" data-key="{{@key}}" data-idx="{{replynum}}"><i class="fas fa-plus-circle"></i></button>
 				</div>
-				<div class="col-xs-7 reply{{@key}} replyText"> {{reply}} </div>
-				<div class="col-xs-2">
-					<div>{{regdate}}</div>
-					<div class="replyoOptionBox{{@key}}" data-idx="{{replynum}}">
-						<button type="button" value="update" class="btn btn-primary passwordChkBtn update" data-key="{{@key}}" data-idx="{{replynum}}" data-toggle="${members.membernum eq {{reply_writer}}? '': 'popover'}">수정</button>
-						<button type="button" value="delete" class="passwordChkBtn delete" data-key="{{@key}}" data-idx="{{replynum}}"data-toggle="popover">삭제</button>
-						<button type="button" class="replyReplyBtn" data-key="{{@key}}" data-idx="{{replynum}}"><i class="fas fa-plus-circle"></i></button>
-					</div>
-				</div>
-			</li>
-			{{/each}}
+			</div>
+		</li>			
+	{{/each}}
 	</script>
 	</ul>
+	
 	<!-- 비밀번호 확인 -->
 	<div id="password-Chk-form" style="display:none;">
 	    <input type="hidden" name="replynum">
@@ -182,7 +184,7 @@
 		</div>
 	</div>
 	<c:choose>
-		<c:when test="${!empty prevNextMap.PREV }">
+		<c:when test="${!empty prevNextMap.PREV}">
 			<div>
 			         이전글
 				<a href="boardView?boardnum=${prevNextMap.PREV}">
@@ -209,9 +211,23 @@
 			다음 게시글이 없습니다.
 		</c:otherwise>
 	</c:choose>
-
 </div>	
 <%@ include file="../include/footer.jsp" %>
-<script src="assets/js/boardReply.js"></script>
 </body>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+<script src="https://kit.fontawesome.com/58a77f3783.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.7.6/handlebars.min.js"></script>
+<script src="assets/js/boardReply.js"></script>
+<script type="text/javascript">
+
+ 	var boardnum = "<c:out value='${board.boardnum}'/>";
+	getReplies("replyList"); // 댓글 목록 함수 호출 
+		
+	Handlebars.registerHelper('stringToInt', function(reply_writer){
+		var reply_writer = String(reply_writer); 
+		return reply_writer;
+	})
+</script>
 </html>
