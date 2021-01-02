@@ -15,9 +15,15 @@ public class Board_reply {
 	private String reply_password;      // 비회원 비밀번호 
 	private DATE regdate;              // 등록일
     private String del;
-	
-
-
+   // private String search;
+    
+	//public String getSearch() {
+	//	return search;
+	//}
+	//public void setSearch(String search) {
+	//	System.out.println("search: " + search);
+	//	this.search = search;
+	//}
 	public int getReplynum() {
 		return replynum;
 	}

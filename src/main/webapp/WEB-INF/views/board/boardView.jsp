@@ -99,7 +99,7 @@
 	<!-- 댓글 -->
 	<form id="reply-form">
 	<c:if test="${members != null}">
-		<input type="hidden" value="${board.writer}" name="reply_writer">
+		<input type="hidden" value="${members.membernum}" name="reply_writer">
 	</c:if>
 	<input type="hidden" value="${board.boardnum}" name="reply_boardnum">
 	<c:if test="${members == null}">
@@ -131,18 +131,7 @@
 			<div class="col-xs-2">
 				<div>{{regdate}}</div>
 				<div id="test" class="replyoOptionBox{{@key}}" data-idx="{{replynum}}">
-				<c:choose>
-					<c:when test="${empty members.membernum}">
-						<button type="button" value="update" class="btn btn-primary passwordChkBtn update" data-key="{{@key}}" data-idx="{{replynum}}" data-toggle="${members.membernum eq 0? 'popover': ''}">수정</button>
-						<button type="button" value="delete" class="passwordChkBtn delete" data-key="{{@key}}" data-idx="{{replynum}}" data-toggle="popover">삭제</button>
-					</c:when>
-					<c:when test="${members.membernum eq {{reply_writer}}}">
-						<button>내 글 수정</button>
-					</c:when>
-					<c:otherwise>
-
-					</c:otherwise>
-				</c:choose>
+					{{{buttonFunction reply_writer @key replynum }}}
 					<button type="button" class="replyReplyBtn" data-key="{{@key}}" data-idx="{{replynum}}"><i class="fas fa-plus-circle"></i></button>
 				</div>
 			</div>
@@ -224,10 +213,31 @@
 
  	var boardnum = "<c:out value='${board.boardnum}'/>";
 	getReplies("replyList"); // 댓글 목록 함수 호출 
+	
+	
+	
+	Handlebars.registerHelper('buttonFunction', function(reply_writer,index,replynum){
+		var membernum ="<c:out value='${empty members.membernum?0:members.membernum}'/>";
+		var result;
+
+		var update = '<button type="button" value="update" class="btn btn-primary passwordChkBtn update" data-key="'+ index +'" data-idx="'+ replynum +'" data-toggle="popover">수정</button>';
+		var del = '<button type="button" value="delete" class="passwordChkBtn delete" data-key="'+ index +'" data-idx="'+ replynum +'" data-toggle="popover">삭제</button>';
 		
-	Handlebars.registerHelper('stringToInt', function(reply_writer){
-		var reply_writer = String(reply_writer); 
-		return reply_writer;
+		// 현재 이용자가 비회원이면서 댓글작성자 비회원
+		if(membernum == 0 && reply_writer == 0){
+			result = update+del;	
+		// 현재 이용자가 비회원이면서 댓글작성자 회원	
+		}else if(membernum == 0 && reply_writer > 0){
+			return;
+		// 현재 이용자가 회원이면서 댓글작성자와 현재이용자가 같음
+		}else if(membernum > 0 && reply_writer == membernum){
+			var update = '<button type="button" value="update" class="btn btn-primary passwordChkBtn update" data-key="'+index+'" data-idx="'+replynum+'">수정</button>';
+			var del = '<button type="button" value="delete" class="passwordChkBtn delete" data-key="'+index+'"data-idx="'+replynum+'">삭제</button>';
+			result = update+del;
+		}else{
+			return;
+		}
+		return result;
 	})
 </script>
 </html>

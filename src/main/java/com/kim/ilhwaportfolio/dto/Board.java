@@ -7,7 +7,7 @@ public class Board {
 	private String subject;
 	private String content;
 	private String img;
-	private Integer writer;
+	private int writer;
 	private String writerid;
 	private String pwd;
 	private DATE regdate;
@@ -69,11 +69,11 @@ public class Board {
 		this.img = img;
 	}
 
-	public Integer getWriter() {
+	public int getWriter() {
 		return writer;
 	}
 
-	public void setWriter(Integer writer) {
+	public void setWriter(int writer) {
 		this.writer = writer;
 	}
 

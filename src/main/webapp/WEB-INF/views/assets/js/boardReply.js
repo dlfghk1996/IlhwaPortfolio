@@ -40,6 +40,7 @@
 	
 	// 댓글 비밀번호 확인
 	$(document).on('click', '.replyPasswordChkBtn', function(e) {
+		alert('비밀번호 확인');
 		$(this).parents('.popover').popover('hide');
 		var thisEle = $(this).closest('li');
 		var key = $(e.target).data('key');
@@ -47,10 +48,10 @@
 		var reply_password = $('#reply_password-chk').val(); //댓글 비밀번호
 		var value = $(this).hasClass("update") ? "update" : "delete";
 	
-		var data = {replynum : replynum,
-			  	reply_password :reply_password,
-	       	 	value : value
-	          }
+		var data = { replynum : replynum,
+			  	     reply_password :reply_password,
+	       	 	     value : value
+	               }
 	$.ajax({
 	    url:'replyPwCheck', 
 	    type:'POST', 
@@ -132,7 +133,7 @@
 
 	// 댓글등록
 	$('#replyBtn').click(function(){
-		
+		alert('댓글 등록');
 		$.ajax({
 		data : $('#reply-form').serialize(),
 			type : 'POST',

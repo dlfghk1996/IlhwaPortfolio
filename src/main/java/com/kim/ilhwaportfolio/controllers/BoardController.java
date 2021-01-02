@@ -237,7 +237,7 @@ public class BoardController {
 	@RequestMapping(value = "replyWrite", method = RequestMethod.POST)
 	@ResponseBody
 	public String replyWrite(Board_reply board_reply) throws Exception {
-		System.out.println(board_reply.toString());
+		System.out.println("댓글 작성" + board_reply.toString());
 		if (board_reply.getParent() != 0) {
 			// 대댓글
 			// 부모 댓글의 마지막 계층 구하기
@@ -280,21 +280,25 @@ public class BoardController {
 		board_reply.setReplynum(Integer.parseInt(parm.get("replynum")));
 		board_reply.setReply_password(parm.get("reply_password"));
 		int replyPwCheckResult = 0;
-		// 수정, 삭제 비밀번호 확인
+//		// 수정, 삭제 비밀번호 확인
 		Board_reply reply = boardReplyService.replyPwCheck(board_reply);
 		if (reply != null) {
 			if (parm.get("value").equals("delete")) {
+				System.out.println("delete");
+				System.out.println("비밀번호 체크 결과 " + reply.toString());
 				int childrenResult = boardReplyService.getReplyChildren(reply);
-				if (childrenResult <= 0) {
-					replyPwCheckResult = boardReplyService.replyDelete(reply) > 0 ? 2 : 0;
-					// 삭제하려는 대상의 댓글보다 순번이 큰 댓글들의 순서(reorder) 값은 1씩 빼서 순서 값을 맞춰 준다.
-					// boardReplyService.deleteReplySeqUpdate(reply);
-				}
-			} else {
-				replyPwCheckResult = 1;
+				System.out.println("childrenResult : " + childrenResult);
+//				if (childrenResult <= 0) {
+//					replyPwCheckResult = boardReplyService.replyDelete(reply) > 0 ? 2 : 0;
+//					// 삭제하려는 대상의 댓글보다 순번이 큰 댓글들의 순서(reorder) 값은 1씩 빼서 순서 값을 맞춰 준다.
+//					// boardReplyService.deleteReplySeqUpdate(reply);
+//				}
+//			} else {
+//				replyPwCheckResult = 1;
 			}
 		}
-		return replyPwCheckResult;
+		//return replyPwCheckResult;
+		return 1;
 	}
 
 	/** 댓글 수정 */

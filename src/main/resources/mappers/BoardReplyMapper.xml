@@ -67,7 +67,7 @@
 	<select id="getReplyChildren" resultType="int" >
 		SELECT count(*) FROM boardreply WHERE 
 		<choose> 
-		    <when test= 'reply_writer != null &amp;&amp; !search.equals("")'>
+		    <when test= 'reply_writer != null &amp;&amp; !reply_writer.equals("")'>
 		    	depth <![CDATA[>]]> (SELECT depth FROM boardreply where replynum =  #{replynum} )
 			</when>
 			<otherwise>
