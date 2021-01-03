@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@ page trimDirectiveWhitespaces="true" %>
-<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ page trimDirectiveWhitespaces="true"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ page isELIgnored="false"%>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -8,21 +9,11 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>Login</title>
-	<link  rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atma:wght@500&display=swap">
-	<link rel="stylesheet" href="assets/css/bootstrap.min.css">
+	
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atma:wght@500&display=swap">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
 	<link rel="stylesheet" href="assets/css/common.css" type="text/css">
 	<link rel="stylesheet" href="assets/css/login.css" type="text/css">
-	<style type="text/css">
-		#modal-content-container table {
-		    text-align: center;
-    		width: 500px;
-    		font-size: 20px;
-		}
-		#modal-content-container table td {
-			padding: 20px;
-    		border-bottom: 1px dotted gray;
-		}	
-	</style>
 </head>
 <body>
 	<!-- join modal -->
@@ -30,7 +21,7 @@
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<div class="modal-header">
- 					<h2 class="modal-title">Welcom To NextLine.</h2>
+ 					<h2 class="modal-title">Welcome To ILHWA's Web.</h2>
  				</div>
 				<form id="form-join" class="form-horizontal">
 					<div class="modal-body">
@@ -184,8 +175,8 @@
 						</div>
 					</div>
 					<div class="modal-footer">
-						<button type="button" class="btn btn-info" onclick="finalValueCheckForPwReset()">확인</button>
 						<button type="button" class="btn btn-default" data-dismiss="modal">close</button>
+						<button type="button" class="btn btn-info" onclick="finalValueCheckForPwReset()">확인</button>
 					</div>
 				</form>
 			</div>
@@ -224,11 +215,11 @@
 	<!-- login form -->
 	<div class="container">
 		<form id="form-login" action="signIn" method="post">
-			<div class="IH-title">NEXT LINE</div>
+			<div class="IH-title">ILHWA's Portfolio</div>
    			<div class="form-group">
    				<!-- e-mail -->
    				<label for="email" class="sr-only">e-mail</label> 
-     			<input type="email" class="form-control" name="email" placeholder="e-mail"  value="${userEmailInCookie}">
+     			<input type="email" class="form-control" name="email" placeholder="e-mail" value="${userEmailInCookie}">
    			</div>	
    			<div class="form-group">
    				<!-- password -->
@@ -251,8 +242,8 @@
 
 	<%@ include file="include/footer.jsp" %>
 
-	<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-	<script src="assets/js/bootstrap.min.js"></script>
-	<script src="assets/js/login.js">	</script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+	<script src="assets/js/login.js"></script>
 </body>
 </html>

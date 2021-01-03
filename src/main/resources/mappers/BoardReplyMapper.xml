@@ -3,77 +3,49 @@
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="BoardReplyMapper">
 	
-	<!-- write Reply -->
+	<!-- 댓글 등록 -->
 	<insert id="addReply" parameterType="com.kim.ilhwaportfolio.dto.Board_reply">
 		 <selectKey keyProperty="replynum" resultType="int">
 			SELECT replynum_pk.CURRVAL AS boardreply FROM DUAL
 		</selectKey>
-	INSERT INTO boardreply VALUES(replynum_pk.NEXTVAL,#{reply_boardnum},#{parent},#{seq},#{depth},#{reply},#{reply_writer},#{reply_writer_nickname},#{reply_password},SYSDATE)
+	INSERT INTO boardreply VALUES(replynum_pk.NEXTVAL,#{reply_boardnum},#{parent},#{seq},#{depth},#{reply},#{reply_writer},#{reply_writer_nickname},#{reply_password},SYSDATE,#{del})
 	</insert>
 	
-	<!-- get ReplyList -->
+	<!-- 댓글 목록 -->
 	<select id="getReplyList" parameterType="int" resultType="com.kim.ilhwaportfolio.dto.Board_reply">
-		SELECT * FROM boardreply WHERE reply_boardnum = ${value} ORDER BY seq ASC
+		SELECT * FROM boardreply WHERE reply_boardnum = ${value} ORDER BY replynum ASC
 	</select>
 	
-	<!-- Password Check -->
+	<!-- 비회원 댓글 비밀번호 확인 -->
 	<select id="replyPwCheck" resultType="com.kim.ilhwaportfolio.dto.Board_reply" >
 		SELECT * FROM boardreply WHERE replynum = #{replynum} AND reply_password =#{reply_password}
 	</select>
 	
-	<!-- update Reply -->
+	<!-- 댓글 수정 -->
 	<update id="replyUpdate" >
 		UPDATE boardreply SET reply = #{reply}, regdate = sysdate  WHERE replynum = #{replynum}
 	</update>
 	
-	<!-- delete Reply -->
+	<!-- 댓글 삭제 -->
 	<delete id="replyDelete" >
     	DELETE FROM boardreply WHERE replynum = #{replynum} OR parent = #{replynum}
 	</delete>
 	
-	<!-- Update replySeq-->
-	<select id="replyMaxSeq" resultType="int" parameterType="int" >
-		 SELECT NVL(MAX(Seq),0)+1 FROM boardreply WHERE reply_boardnum=${value}
-	</select>
+	<!-- 부모 댓글 삭제 시 del 컬럼 값 변경-->
+	<update id="parentReplyDelete" parameterType="int">
+		UPDATE boardreply SET del = 'y' WHERE replynum = #{replynum}
+	</update>
 	
-	<!-- replyGetDepth -->
-	<select id="replyGetDepth" resultType="com.kim.ilhwaportfolio.dto.Board_reply" parameterType="int" >
-		SELECT depth+1 as depth, seq+1 as seq FROM boardreply WHERE replynum= ${value}
-	</select>
-	
-	
-	<!-- replySeqUpdate
-	           기존 순번과 새로운 순번이 같거나 새로운 순번이 더 크다면 기존순번에 +1을 해준다.-->
+	<!-- 댓글 순번 업데이트 : 같은 부모의 자식들의 마지막 순번에 +1을 해준다. (1,2,3)-->
 	<update id="replySeqUpdate" >
-		UPDATE boardreply SET seq= seq+1 WHERE reply_boardnum=#{reply_boardnum} and seq>=#{seq}
+		UPDATE boardreply SET
+		seq = (SELECT MAX(Seq) FROM boardreply WHERE parent=#{parent})+1,
+		depth =  depth+1
+		WHERE replynum = #{replynum}
 	</update>
 
-   <!-- Update Seq After Delete 
-   		댓글 삭제 후 기본 순번 재정렬 -->
-	<update id="deleteReplySeqUpdate" >
-		UPDATE
-		    (
-		    select replyTB1.seq 
-		    from boardreply replyTB1,boardreply replyTB2 
-		    where replyTB1.replynum = replyTB2.replynum
-		    AND replyTB1.reply_BOARDNUM = #{reply_boardnum}
-		 )
-		SET seq  = seq-1
-		where seq <![CDATA[>]]>  #{seq}
-	</update>
-	
-	<!-- getReplyChildren : 댓글 삭제 전에 자식댓글있는지 확인 -->
-		<!-- replyGetDepth -->
-	<select id="getReplyChildren" resultType="int" >
-		SELECT count(*) FROM boardreply WHERE 
-		<choose> 
-		    <when test= 'reply_writer != null &amp;&amp; !reply_writer.equals("")'>
-		    	depth <![CDATA[>]]> (SELECT depth FROM boardreply where replynum =  #{replynum} )
-			</when>
-			<otherwise>
-				depth > #{depth}
-			</otherwise>
-		</choose>
-		and parent =  #{replynum} 
+	<!-- 삭제할려는 댓글의 자식 확인 -->
+	<select id="getReplyChildren" resultType="int" parameterType="int">
+		SELECT count(*) FROM boardreply WHERE parent =  ${value}
 	</select>
 </mapper>

@@ -237,24 +237,11 @@ public class BoardController {
 	@RequestMapping(value = "replyWrite", method = RequestMethod.POST)
 	@ResponseBody
 	public String replyWrite(Board_reply board_reply) throws Exception {
-		System.out.println("댓글 작성" + board_reply.toString());
-		if (board_reply.getParent() != 0) {
-			// 대댓글
-			// 부모 댓글의 마지막 계층 구하기
-			Board_reply replyInfo = boardReplyService.replyGetDepth(board_reply.getParent());
-			board_reply.setDepth(replyInfo.getDepth());
-			board_reply.setSeq(replyInfo.getSeq());
-			// **순서 업데이트 관련 메서드 **//
-			// 기존 순번과 새로운 순번이 같거나 새로운 순번이 더 크다면 기존순번에 +1을 해준다.
-			boardReplyService.replySeqUpdate(board_reply);
-		} else {
-			// 댓글순번
-			int replyMaxSeq = boardReplyService.replyMaxSeq(board_reply.getReply_boardnum());
-			System.out.println(replyMaxSeq);
-			board_reply.setSeq(replyMaxSeq);
-		}
-		// 댓글 등록
 		int result = boardReplyService.addReply(board_reply);
+		if (board_reply.getParent() != 0) {
+			// 같은 부모의 자식들의 순번과 새로운 순번이 같다면  새로운 순번에 +1을 해준다. (1,2,3)
+			boardReplyService.replySeqUpdate(board_reply);
+		}
 		return "";
 	}
 
@@ -265,68 +252,55 @@ public class BoardController {
 	public Map<String, Object> replyList(@RequestParam int boardnum) throws Exception {
 		List<Board_reply> replyList = boardReplyService.getReplyList(boardnum);
 		Map<String, Object> map = new HashMap<String, Object>();
-		System.out.println(map.get("replyList"));
 		map.put("replyList", replyList);
-		System.out.println("map" + map);
 		return map;
 	}
 
-	/** 댓글 ( 삭제/ 수정 ) 비밀번호 확인 */
+	/** 댓글 (삭제/ 수정) 시  비밀번호 확인 */
 	// json 데이터를 리턴
 	@RequestMapping(value = "replyPwCheck", method = RequestMethod.POST)
 	@ResponseBody
 	public int replyPwCheck(@RequestBody Map<String, String> parm) throws Exception {
+		
 		Board_reply board_reply = new Board_reply();
 		board_reply.setReplynum(Integer.parseInt(parm.get("replynum")));
 		board_reply.setReply_password(parm.get("reply_password"));
+		
 		int replyPwCheckResult = 0;
-//		// 수정, 삭제 비밀번호 확인
+		// 댓글의 비밀번호 확인
 		Board_reply reply = boardReplyService.replyPwCheck(board_reply);
 		if (reply != null) {
 			if (parm.get("value").equals("delete")) {
-				System.out.println("delete");
-				System.out.println("비밀번호 체크 결과 " + reply.toString());
-				int childrenResult = boardReplyService.getReplyChildren(reply);
-				System.out.println("childrenResult : " + childrenResult);
-//				if (childrenResult <= 0) {
-//					replyPwCheckResult = boardReplyService.replyDelete(reply) > 0 ? 2 : 0;
-//					// 삭제하려는 대상의 댓글보다 순번이 큰 댓글들의 순서(reorder) 값은 1씩 빼서 순서 값을 맞춰 준다.
-//					// boardReplyService.deleteReplySeqUpdate(reply);
-//				}
-//			} else {
-//				replyPwCheckResult = 1;
+				int numberofChildren = boardReplyService.getReplyChildren(reply.getReplynum());
+				if(numberofChildren > 0) {
+					boardReplyService.parentReplyDelete(reply.getReplynum());
+				}else {
+					boardReplyService.replyDelete(reply);
+				}
 			}
+		replyPwCheckResult = 1;
 		}
-		//return replyPwCheckResult;
-		return 1;
+		return replyPwCheckResult;
 	}
 
 	/** 댓글 수정 */
 	@RequestMapping(value = "replyUpdate", method = RequestMethod.POST)
 	@ResponseBody
 	public int replyUpdate(@RequestBody Board_reply board_reply) throws Exception {
-
 		int replyUpdateResult = boardReplyService.replyUpdate(board_reply);
 		return replyUpdateResult;
 	}
 
-	/** 댓글 삭제 */
-	@RequestMapping(value = "replyDelete", method = RequestMethod.POST)
+	/** 회원 댓글 삭제 */
+	@RequestMapping(value = "memberReplyDelete", method = RequestMethod.POST)
 	@ResponseBody
-	public int replyDelete(@RequestBody Board_reply board_reply) throws Exception {
-
-		int result = 0;
-		// session member
-		Member member = (Member) webHelper.getSession("members", "");
-		board_reply.setReply_writer(member.getMembernum());
-
-		int childrenResult = boardReplyService.getReplyChildren(board_reply);
-		if (childrenResult <= 0) {
-			result = boardReplyService.replyDelete(board_reply);
-			// 삭제하려는 대상의 댓글보다 순번이 큰 댓글들의 순서(reorder) 값은 1씩 빼서 순서 값을 맞춰 준다.
-			// boardReplyService.deleteReplySeqUpdate(reply);
+	public int memberReplyDelete(@RequestBody Board_reply board_reply) throws Exception {
+		int numberofChildren = boardReplyService.getReplyChildren(board_reply.getReplynum());
+		if(numberofChildren > 0) {
+			boardReplyService.parentReplyDelete(board_reply.getReplynum());
+		}else {
+			boardReplyService.replyDelete(board_reply);
 		}
-		return result;
+		return 0;
 	}
-
 }

@@ -63,14 +63,6 @@ public class BoardReplyServiceImpl implements BoardReplyService{
 		return result;
 	}
 	
-	// 댓글 max 순번 조회
-	@Override
-	public int replyMaxSeq(int input) throws Exception {
-		int result = 0;
-		result = sqlSession.selectOne("BoardReplyMapper.replyMaxSeq",input);
-		return result;
-	}
-	
     // 댓글 순번 업데이트
 	@Override
 	public int replySeqUpdate(Board_reply input) throws Exception {
@@ -78,18 +70,7 @@ public class BoardReplyServiceImpl implements BoardReplyService{
 		result = sqlSession.update("BoardReplyMapper.replySeqUpdate",input);
 		return result;
 	}
-
-	// 대댓글 계층/순번 조회
-	@Override
-	public Board_reply replyGetDepth(int input) throws Exception {
-		Board_reply result = null;
-		result = sqlSession.selectOne("BoardReplyMapper.replyGetDepth",input);
-		if(result == null) {
-			throw new NullPointerException("result == null");
-		}
-		return result;
-	}
-
+	
 	// 댓글 삭제후 재정렬
 	@Override
 	public int deleteReplySeqUpdate(Board_reply input) throws Exception {
@@ -103,9 +84,20 @@ public class BoardReplyServiceImpl implements BoardReplyService{
 	
 	// 자식 조회
 	@Override
-	public int getReplyChildren(Board_reply input) throws Exception {
+	public int getReplyChildren(int input) throws Exception {
 		int result = 0;
 		result = sqlSession.selectOne("BoardReplyMapper.getReplyChildren",input);
+		return result;
+	}
+
+	// 부모 댓글 삭제
+	@Override
+	public int parentReplyDelete(int input) throws Exception {
+		int result = 0;
+		result = sqlSession.update("BoardReplyMapper.parentReplyDelete",input);
+		if(result == 0) {
+			throw new NullPointerException("result == 0");
+		}
 		return result;
 	}
 

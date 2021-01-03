@@ -100,6 +100,7 @@
 	<form id="reply-form">
 	<c:if test="${members != null}">
 		<input type="hidden" value="${members.membernum}" name="reply_writer">
+		<input type="hidden" value="${members.name}" name="reply_writer_nickname">
 	</c:if>
 	<input type="hidden" value="${board.boardnum}" name="reply_boardnum">
 	<c:if test="${members == null}">
@@ -125,17 +126,20 @@
 	<ul id="replyprint">
 	<script id="reply-Template" type="text/x-handlebars-template">
 	{{#each.}}
-		<li class="reply row" data-depth ="{{depth}}" style="margin-left: calc(20px*{{depth}});">
-			<div class="writerbox col-xs-3"><span>{{reply_writer_nickname}}</span></div>
-			<div class="col-xs-7 reply{{@key}} replyText">{{reply}}</div>
-			<div class="col-xs-2">
-				<div>{{regdate}}</div>
-				<div id="test" class="replyoOptionBox{{@key}}" data-idx="{{replynum}}">
-					{{{buttonFunction reply_writer @key replynum }}}
-					<button type="button" class="replyReplyBtn" data-key="{{@key}}" data-idx="{{replynum}}"><i class="fas fa-plus-circle"></i></button>
+		{{#if del}}
+			<div>삭제된 댓글 입니다.</div>
+		{{else}}
+			<li class="reply row" data-depth ="{{depth}}" style="margin-left: calc(20px*{{depth}});">
+					<div class="writerbox col-xs-3"><span>{{reply_writer_nickname}}</span></div>
+					<div class="col-xs-7 reply{{@key}} replyText">{{reply}}</div>
+					<div class="col-xs-2">
+						<div>{{regdate}}</div>
+						<div id="test" class="replyoOptionBox{{@key}}" data-idx="{{replynum}}">
+							{{{buttonFunction reply_writer @key replynum depth}}}
+					</div>
 				</div>
-			</div>
-		</li>			
+			</li>	
+		{{/if}}
 	{{/each}}
 	</script>
 	</ul>
@@ -210,30 +214,34 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.7.6/handlebars.min.js"></script>
 <script src="assets/js/boardReply.js"></script>
 <script type="text/javascript">
-
+	
  	var boardnum = "<c:out value='${board.boardnum}'/>";
 	getReplies("replyList"); // 댓글 목록 함수 호출 
 	
 	
 	
-	Handlebars.registerHelper('buttonFunction', function(reply_writer,index,replynum){
+	Handlebars.registerHelper('buttonFunction', function(reply_writer,index,replynum,depth){
 		var membernum ="<c:out value='${empty members.membernum?0:members.membernum}'/>";
 		var result;
 
 		var update = '<button type="button" value="update" class="btn btn-primary passwordChkBtn update" data-key="'+ index +'" data-idx="'+ replynum +'" data-toggle="popover">수정</button>';
 		var del = '<button type="button" value="delete" class="passwordChkBtn delete" data-key="'+ index +'" data-idx="'+ replynum +'" data-toggle="popover">삭제</button>';
-		
+		var replyAdd ='';
 		// 현재 이용자가 비회원이면서 댓글작성자 비회원
+		if(depth != 1){
+			replyAdd = membernum +','+reply_writer+ '<button type="button" class="replyReplyBtn" data-key="'+ index +'"  data-idx="'+ replynum +'"><i class="fas fa-plus-circle"></i></button>';
+		}
+		// 현재 이용자가 비회원이면서 댓글작성자 비회원	
 		if(membernum == 0 && reply_writer == 0){
-			result = update+del;	
+			result = update+del+replyAdd;	
 		// 현재 이용자가 비회원이면서 댓글작성자 회원	
 		}else if(membernum == 0 && reply_writer > 0){
 			return;
 		// 현재 이용자가 회원이면서 댓글작성자와 현재이용자가 같음
 		}else if(membernum > 0 && reply_writer == membernum){
-			var update = '<button type="button" value="update" class="btn btn-primary passwordChkBtn update" data-key="'+index+'" data-idx="'+replynum+'">수정</button>';
-			var del = '<button type="button" value="delete" class="passwordChkBtn delete" data-key="'+index+'"data-idx="'+replynum+'">삭제</button>';
-			result = update+del;
+			var mupdate = '<button type="button" value="update" class="memberReplyDelete btn btn-primary update" data-key="'+index+'" data-idx="'+replynum+'">수정</button>';
+			var mdel = '<button type="button" value="delete" class="memberReplyDelete delete" data-key="'+index+'"data-idx="'+replynum+'">삭제</button>';
+			result = mupdate+mdel+replyAdd;
 		}else{
 			return;
 		}
