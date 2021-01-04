@@ -3,27 +3,26 @@
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="BoardMapper">
 	
-	<!-- writeContent -->
+	<!-- 게시물 쓰기 -->
 	<insert id="postContent" parameterType="com.kim.ilhwaportfolio.dto.Board">
 		<selectKey keyProperty="boardnum" resultType="int">
 			SELECT boardnum_pk.CURRVAL AS boardnum FROM DUAL
 		</selectKey>
-	INSERT INTO BOARD VALUES(boardnum_pk.NEXTVAL, #{subject},#{content},#{img},#{writer},#{writerid},#{pwd},sysdate,sysdate,0,0)
+		INSERT INTO BOARD VALUES(boardnum_pk.NEXTVAL, #{subject},#{content},#{img},#{writer},#{writerid},#{pwd},sysdate,sysdate,0,0)
 	</insert>
 	
-	<!-- GetBoardList -->
+	<!-- 게시글 전체 목록 조회 및 검색 조회 -->
 	<select id="contentList" resultType="com.kim.ilhwaportfolio.dto.Board">
-		SELECT * FROM (
-		SELECT rownum as rnum, a.* from (
-		SELECT boardnum,b.subject,name as writerid,b.regdate,b.readnum FROM board b LEFT JOIN member m ON b.writer = m.membernum 
-		<include refid="searchSQL"/>
-		order by boardnum desc)a)c
+		SELECT  c.*,(select count(*) as replycount from boardreply where reply_boardnum = c.boardnum ) recount 
+			FROM (
+			SELECT rownum as rnum, a.* from (
+				SELECT boardnum,b.subject,b.writerid || m.name as writerid, b.regdate,b.readnum 
+				FROM board b left JOIN (select * from member where membernum !=0 ) m ON b.writer = m.membernum 
+				<include refid="searchSQL"/>
+				order by boardnum desc)a)c
 		where rnum <![CDATA[>=]]> ${start} and rnum <![CDATA[<=]]>  ${end}
 	</select>
 	
-	<!--<sql id="searchSQL">
-		WHERE subject LIKE '%${search}%'
-	</sql>-->
 	<!-- sql code 조각-->
 	<!-- 반복되는 sql의 일부를 sql태그를 이용하여 따로 뺴돌수 있다 -->
 	<sql id="searchSQL">
@@ -40,8 +39,9 @@
 	   		</choose>
 	   </if> 
 	</sql>
-	<!-- viewContent -->	
-	<select id="viewContent" parameterType="int"  resultType="com.kim.ilhwaportfolio.dto.Board">
+	
+	<!-- 게시글 상세보기 -->	
+	<select id="viewContent" parameterType="int" resultType="com.kim.ilhwaportfolio.dto.Board">
 		SELECT * FROM board where boardnum = ${value}
 	</select>
 	
@@ -53,10 +53,15 @@
 			lead(subject,1) over(order by subject) as nextsubject,
 			lag(boardnum,1) over(order by boardnum) as prev,
 			lag(subject,1) over(order by subject) as prevsubject
-			from board )where boardnum = ${value}
+			from board) where boardnum = ${value}
 	</select>
 	
-	<!-- nonMember pwchk for updateContent -->
+	<!-- 게시글 수정 -->
+	<update id="updateContent">
+		UPDATE board SET subject = #{subject},content = #{content},edidate=sysdate  WHERE boardnum = #{boardnum}
+	</update>
+	
+	<!-- 비회원 게시글 수정 비밀번호 -->
 	<select id="nonMemberPwChk" resultType="com.kim.ilhwaportfolio.dto.Board">
 		SELECT * FROM board WHERE pwd = #{pwd} AND boardnum = ${boardnum}
 	</select>
@@ -66,12 +71,7 @@
 		SELECT count(*) FROM board 
 	</select>
 	
-	<!--updateContent -->
-	<update id="updateContent">
-		UPDATE board SET subject = #{subject}, content = #{content},edidate=sysdate  WHERE boardnum = #{boardnum}
-	</update>
-	
-	<!-- updateReadNum -->
+	<!-- 조회수 업데이트 -->
 	<update id="updateReadNum">
 		UPDATE board SET readnum = readnum+1 WHERE boardnum = #{boardnum}
 	</update>

@@ -47,7 +47,14 @@
 			 			 <c:forEach var="boardDTO" items="${contentList}">
 			 				<tr>
 			 					<td>${boardDTO.boardnum}</td>
-			 					<td><a href="boardView?boardnum=${boardDTO.boardnum}">${boardDTO.subject}</a></td>
+			 					<td>
+			 						<a href="boardView?boardnum=${boardDTO.boardnum}">
+			 							${boardDTO.subject} 
+			 							<c:if test = "${boardDTO.recount>0}">
+			 								[${boardDTO.recount}]
+			 							</c:if>
+			 						</a>
+			 					</td>
 			 					<td>${boardDTO.writerid}</td>
 			 					<td>${boardDTO.regdate}</td>
 			 					<td>${boardDTO.readnum}</td>

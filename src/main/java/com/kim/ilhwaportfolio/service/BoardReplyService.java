@@ -13,7 +13,7 @@ public interface BoardReplyService {
 	// 댓글 수정
 	public int replyUpdate(Board_reply input) throws Exception;
 	// 댓글 삭제
-	public int replyDelete(Board_reply input) throws Exception;
+	public int replyDelete(int input) throws Exception;
 	// 부모 댓글 삭제
 	public int parentReplyDelete(int input) throws Exception;
 	// 비밀번호 확인

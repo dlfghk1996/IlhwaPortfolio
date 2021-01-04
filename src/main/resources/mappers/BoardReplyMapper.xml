@@ -26,6 +26,11 @@
 		UPDATE boardreply SET reply = #{reply}, regdate = sysdate  WHERE replynum = #{replynum}
 	</update>
 	
+	<!-- 삭제할려는 댓글의 자식 확인 -->
+	<select id="getReplyChildren" resultType="int" parameterType="int">
+		SELECT count(*) FROM boardreply WHERE parent =  ${value}
+	</select>
+	
 	<!-- 댓글 삭제 -->
 	<delete id="replyDelete" >
     	DELETE FROM boardreply WHERE replynum = #{replynum} OR parent = #{replynum}
@@ -44,8 +49,5 @@
 		WHERE replynum = #{replynum}
 	</update>
 
-	<!-- 삭제할려는 댓글의 자식 확인 -->
-	<select id="getReplyChildren" resultType="int" parameterType="int">
-		SELECT count(*) FROM boardreply WHERE parent =  ${value}
-	</select>
+	
 </mapper>

@@ -55,7 +55,7 @@
   			</div>
 			<textarea name="content" id="summernote" class="content"></textarea>
 			<div class="row">
-				<div class="col-md-offset-10 col-md-1"><button type="button" class="btn btn-primary" >목록</button></div>
+				<div class="col-md-offset-10 col-md-1"><button type="button" class="btn btn-primary">목록</button></div>
 				<div class="col-md-1"><button type="submit" class="btn btn-success">등록</button></div>
 			</div>
 		</form>

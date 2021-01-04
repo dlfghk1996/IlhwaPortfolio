@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -109,7 +110,6 @@ public class BoardController {
 	/** 상세 게시글 보기 */
 	@RequestMapping(value = "boardView", method = RequestMethod.GET)
 	public String viewContent(@RequestParam("boardnum") int boardnum, Model model) throws Exception {
-		System.out.println(boardnum);
 		Board board = boardService.viewContent(boardnum);
 		if (board == null) {
 			System.out.println("예외처리 실행");
@@ -204,6 +204,7 @@ public class BoardController {
 		List<MultipartFile> fileList = request.getFiles("uploadfile");
 		FileUtils fileUtils = new FileUtils();
 		String filename = fileUtils.uploadFile(fileList);
+		System.out.println("imgupload 서블릿: " + filename );
 		return filename;
 	}
 
@@ -275,7 +276,7 @@ public class BoardController {
 				if(numberofChildren > 0) {
 					boardReplyService.parentReplyDelete(reply.getReplynum());
 				}else {
-					boardReplyService.replyDelete(reply);
+					boardReplyService.replyDelete(reply.getReplynum());
 				}
 			}
 		replyPwCheckResult = 1;
@@ -287,19 +288,20 @@ public class BoardController {
 	@RequestMapping(value = "replyUpdate", method = RequestMethod.POST)
 	@ResponseBody
 	public int replyUpdate(@RequestBody Board_reply board_reply) throws Exception {
+		System.out.println(board_reply.toString());
 		int replyUpdateResult = boardReplyService.replyUpdate(board_reply);
 		return replyUpdateResult;
 	}
 
 	/** 회원 댓글 삭제 */
-	@RequestMapping(value = "memberReplyDelete", method = RequestMethod.POST)
+	@RequestMapping(value = "memberReplyDelete", method = RequestMethod.POST, produces = "application/json; charset=utf8")
 	@ResponseBody
-	public int memberReplyDelete(@RequestBody Board_reply board_reply) throws Exception {
-		int numberofChildren = boardReplyService.getReplyChildren(board_reply.getReplynum());
+	public int memberReplyDelete(@RequestParam("replynum") int replynum) throws Exception {
+		int numberofChildren = boardReplyService.getReplyChildren(replynum);
 		if(numberofChildren > 0) {
-			boardReplyService.parentReplyDelete(board_reply.getReplynum());
+			boardReplyService.parentReplyDelete(replynum);
 		}else {
-			boardReplyService.replyDelete(board_reply);
+			boardReplyService.replyDelete(replynum);
 		}
 		return 0;
 	}

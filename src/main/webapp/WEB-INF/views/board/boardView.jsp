@@ -127,7 +127,7 @@
 	<script id="reply-Template" type="text/x-handlebars-template">
 	{{#each.}}
 		{{#if del}}
-			<div>삭제된 댓글 입니다.</div>
+			<li><div>삭제된 댓글 입니다.</div></li>
 		{{else}}
 			<li class="reply row" data-depth ="{{depth}}" style="margin-left: calc(20px*{{depth}});">
 					<div class="writerbox col-xs-3"><span>{{reply_writer_nickname}}</span></div>
@@ -222,30 +222,39 @@
 	
 	Handlebars.registerHelper('buttonFunction', function(reply_writer,index,replynum,depth){
 		var membernum ="<c:out value='${empty members.membernum?0:members.membernum}'/>";
-		var result;
+		
 
-		var update = '<button type="button" value="update" class="btn btn-primary passwordChkBtn update" data-key="'+ index +'" data-idx="'+ replynum +'" data-toggle="popover">수정</button>';
-		var del = '<button type="button" value="delete" class="passwordChkBtn delete" data-key="'+ index +'" data-idx="'+ replynum +'" data-toggle="popover">삭제</button>';
+		var update = '<button type="button" value="update" class="btn btn-primary passwordChkBtn" data-key="'+ index +'" data-idx="'+ replynum +'" data-toggle="popover">수정</button>';
+		var del = '<button type="button" value="delete" class="passwordChkBtn" data-key="'+ index +'" data-idx="'+ replynum +'" data-toggle="popover">삭제</button>';
 		var replyAdd ='';
-		// 현재 이용자가 비회원이면서 댓글작성자 비회원
+		var result;
+		// 대댓글 허용
 		if(depth != 1){
-			replyAdd = membernum +','+reply_writer+ '<button type="button" class="replyReplyBtn" data-key="'+ index +'"  data-idx="'+ replynum +'"><i class="fas fa-plus-circle"></i></button>';
+			replyAdd = '<button type="button" class="replyReplyBtn" data-key="'+ index +'"  data-idx="'+ replynum +'"><i class="fas fa-plus-circle"></i></button>';
 		}
-		// 현재 이용자가 비회원이면서 댓글작성자 비회원	
+		
+		// 1. 현재 이용자: 비회원  && 댓글작성자: 비회원	
 		if(membernum == 0 && reply_writer == 0){
 			result = update+del+replyAdd;	
-		// 현재 이용자가 비회원이면서 댓글작성자 회원	
-		}else if(membernum == 0 && reply_writer > 0){
-			return;
-		// 현재 이용자가 회원이면서 댓글작성자와 현재이용자가 같음
+			
+		// 2. 현재 이용자: 회원 && 댓글작성자 == 현재이용자
 		}else if(membernum > 0 && reply_writer == membernum){
-			var mupdate = '<button type="button" value="update" class="memberReplyDelete btn btn-primary update" data-key="'+index+'" data-idx="'+replynum+'">수정</button>';
+			var mupdate = '<button type="button" value="update" class="memberReplyUpdate btn btn-primary update" data-key="'+index+'" data-idx="'+replynum+'">수정</button>';
 			var mdel = '<button type="button" value="delete" class="memberReplyDelete delete" data-key="'+index+'"data-idx="'+replynum+'">삭제</button>';
-			result = mupdate+mdel+replyAdd;
+			result = mupdate+mdel+replyAdd	
+		
+		// 3. 현재 이용자: 비회원  && 댓글작성자: 회원  ||  현재 이용자: 회원  && 댓글작성자 != 현재 이용자 
 		}else{
-			return;
+			return replyAdd;
 		}
 		return result;
+		
+		//}else if(membernum == 0 && reply_writer > 0){
+			//return replyAdd;
+		
+		//};
+		
+		
 	})
 </script>
 </html>

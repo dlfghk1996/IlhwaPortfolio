@@ -56,8 +56,7 @@
 		var key = $(e.target).data('key');                              // 댓글 index
 		var replynum = $('input[name=replynum]').val();                // 댓글 pk
 		var reply_password = $('#reply_password-chk').val();          // 댓글 비밀번호
-		//var value = $(this).hasClass("update") ? "update" : "delete";
-		var value = $(this).val();
+		var value = $(this).hasClass("update") ? "update" : "delete";
 		var data = { replynum : replynum,
 			  	     reply_password :reply_password,
 	       	 	     value : value
@@ -86,53 +85,54 @@
 
 
 	// 회원 댓글 삭제
-	$(document).on('click', '.memberReplyDelete', function() {
+	$(document).on('click', '.memberReplyDelete', function() {   
 		$.ajax({
 			type : 'POST', 
 			url : 'memberReplyDelete', 
-			contentType: 'application/json',
-			data : JSON.stringify({replynum:replynum}),
-			context: this, 
-			dataType : "text", 
+			data: {replynum : $(this).data('idx')},
+			context: this,
 			success : function (result) {
 				replyDelete($(this).closest('li'));
 				}
 			});
 		});
  
+	// 회원 댓글 수정 
+	$(document).on('click', '.memberReplyUpdate', function(e) {
+		var key =  $(this).data('key'); 
+		var replynum = $(this).data('idx');   
+		replyUpdate(key,replynum);
+	});
 	
-	
-	// 댓글 수정
+	// 댓글 수정 do
 	$(document).on('click', '.updateReplybtn', function() {
 	var reply = $(this).closest("li").find('textarea[name=reply]:visible').val();
 	var replynum = $(this).data('idx');
-	$.ajax({ 
-		type : 'POST', 
-		url : 'replyUpdate', 
-		contentType: 'application/json',
-		data : JSON.stringify({reply : reply, replynum:replynum } ), 
-		dataType : "text", 
-		success : function (result) { 
-			if (result != "0") {
-				alert("댓글 수정 완료!"); 
-				getReplies("replyList");
-				} 
+		$.ajax({ 
+			type : 'POST', 
+			url : 'replyUpdate', 
+			contentType: 'application/json',
+			data : JSON.stringify({reply : reply, replynum:replynum}), 
+			dataType : "text", 
+			success : function (result) { 
+				if (result != "0") {
+					getReplies("replyList");
+				}
 			} 
 		}); 
 	});
 	
 	// 댓글등록
 	$('#replyBtn').click(function(){
-		alert('댓글 등록');
 		$.ajax({
-		data : $('#reply-form').serialize(),
+			data : $('#reply-form').serialize(),
 			type : 'POST',
 			url : 'replyWrite',
 			success : function(data) {
 				alert('댓글이 등록 되었습니다.');
 				$('#reply-form')[0].reset();
 				// 댓글 목록 함수 호출 
-				getReplies("replyList");
+				getReplies("replyList"); // 댓글 목록 함수 호출
 			}
 		});
   	});
@@ -144,7 +144,6 @@
 			data : $('#reply-reply-form').serialize(),
 			url : 'replyWrite',
 			success : function(data) {
-				alert('댓글이 등록 되었습니다.');
 				// 댓글 목록 함수 호출 
 				getReplies("replyList");
 			}
@@ -154,7 +153,7 @@
 	// 대댓글 입력창
 	$(document).on('click', '.replyReplyBtn', function() {
 		var replynum = $(this).parent().data('idx');
-		$("input[name='parent']").val(replynum);
+		$('input[name="parent"]').val(replynum);
 		$(this).parents('li').append($('.reply-reply-box').html());
 	});
 
@@ -162,7 +161,7 @@
 	// 댓글 목록 함수 
 	function getReplies(repliesUri){
 		//$.getJSON(url,callback) :  ajax()의 축약 형태 -> json데이터를 받아옴
-		var url = repliesUri+"?boardnum="+boardnum;
+		var url = repliesUri+'?boardnum='+boardnum;
 		$.getJSON(url, function (data) {
 				printReplies(data);
 				}); 
@@ -170,13 +169,11 @@
 
 	// 댓글 목록 출력 함수 
 	function printReplies(replyArr) {
-		if(replyArr.replyList.length == 0){
-			console.log("조회 댓글 없음")
-		} else {
+		if(replyArr.replyList.length != 0){
 			// 핸들바 사용순서 : 핸들바 템플릿을 가져온다. -> 핸들바 템플릿을 컴파일한다.
-			var replyTemplate = Handlebars.compile($("#reply-Template").html());
+			var replyTemplate = Handlebars.compile($('#reply-Template').html());
 			var result = replyTemplate(replyArr.replyList);
-			$("#replyprint li:last-child").remove();
-			$("#replyprint").append(result);
+			$('#replyprint').children('li').remove();
+			$('#replyprint').append(result);
 		}
 	}

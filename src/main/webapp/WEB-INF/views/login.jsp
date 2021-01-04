@@ -64,9 +64,9 @@
 							</div>
 						</div>
 						<div class="form-group">
-							<!-- birthdate -->
-							<label for="birthdate" class="col-xs-3 control-label">Birthdate</label>
-							<div class="col-xs-6"><input type="date" class="form-control" name="birthdate" placeholder="Birthdate"></div>
+							<!-- birth date -->
+							<label for="birthdate" class="col-xs-3 control-label">Birth Date</label>
+							<div class="col-xs-6"><input type="date" class="form-control" name="birthdate" placeholder="Birth Date"></div>
 						</div>
 						<div class="form-group">
 							<!-- motto -->
@@ -81,8 +81,8 @@
 						</div>
 					</div>
 					<div class="modal-footer">
-						<button type="submit" class="btn btn-default" data-dismiss="modal">close</button>
-						<button type="button" class="btn btn-success" onclick="join();">회원가입</button>
+						<button id="closeBtn" type="submit" class="btn btn-default" data-dismiss="modal">Close</button>
+						<button type="button" class="btn btn-success" onclick="join();">회원 가입</button>
 					</div>
 				</form>
 			</div>
@@ -94,7 +94,7 @@
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<div class="modal-header">
- 					<h2 class="modal-title">Finding email</h2>
+ 					<h2 class="modal-title">Finding My email</h2>
  				</div>
  				<div id="modal-content-container">
 					<form id="form-find-email" class="form-horizontal">
@@ -105,14 +105,14 @@
 								<div class="col-xs-6"><input type="text" class="form-control" name="name" placeholder="Name"></div>
 							</div>
 							<div class="form-group">
-								<!-- birthdate -->
-								<label for="birthdate" class="col-xs-3 control-label">Birthdate</label>
+								<!-- birth date -->
+								<label for="birthdate" class="col-xs-3 control-label">Birth Date</label>
 								<div class="col-xs-6"><input type="date" class="form-control" name="birthdate" placeholder="Birthdate"></div>
 							</div>
 						</div>
 						<div class="modal-footer">
-							<button type="button" class="btn btn-default" data-dismiss="modal">close</button>
-							<button type="button" class="btn btn-success" onclick="findEmail();">submit</button>
+							<button id="closeBtn" type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+							<button type="button" class="btn btn-success" onclick="findEmail();">Submit</button>
 						</div>
 					</form>
 				</div>
@@ -120,22 +120,18 @@
 		</div>
 	</div>
 	
-	
-	<!-- modal-find-result-email -->
+	<!-- finding email modal_result -->
 	<div class="modal fade" id="modal-find-result-email">
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<div class="modal-header">
- 					<h2 class="modal-title">Finding email</h2>
+ 					<h2 class="modal-title">Finding My email</h2>
  				</div>
- 				<div id="modal-content-container">
-					<table id='findEmailList'>
-						<tr>
-							<td></td>
-						</tr>
-					</table>
-					<button class='btn btn-primary'>로그인 하기</button>
-					<button type='button' id='closebtn'>닫기</button>	
+ 				<div class="modal-body">
+					<div id='findEmailList'><!-- list --></div>
+				</div>
+				<div class="modal-footer">
+				<button id="closeBtn" type="button" class="btn btn-default" data-dismiss="modal">Close</button>
 				</div>
 			</div>
 		</div>
@@ -146,72 +142,74 @@
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<div class="modal-header">
- 					<h2 class="modal-title">Finding Password</h2>
+ 					<h2 class="modal-title">Finding My Password</h2>
  				</div>
 				<form id="form-find-pw" class="form-horizontal" method="POST">
 					<div class="modal-body">
 						<div class="form-group">
 							<!-- e-mail -->
 							<label for="email" class="col-xs-3 control-label">e-mail</label>
-							<!-- id와   name이 다른 이유 : 서버로 보내는 데이터를 구분 하기 위해 -> name: email로 보내면 null값으로 된다.-->
-							<div class="col-xs-6"><input type="email" class="form-control" name="email"  placeholder="ID(E-mail형식)"></div>
+							<!-- id와 name이 다른 이유 : 서버로 보내는 데이터를 구분 하기 위해 -> name : email로 보내면 null값이 된다.-->
+							<div class="col-xs-6"><input type="email" class="form-control" name="email" placeholder="e-mail"></div>
 							<!-- emailExistCheck true/false : front 에서 check-->	
 						</div>
 						<div class="form-group">
-							<label for="name" class="col-xs-3 control-label">name</label>
+							<label for="name" class="col-xs-3 control-label">Name</label>
 							<div class="col-xs-6"><input type="text" class="form-control" name="name" placeholder="name"></div>
 						</div>
 						<div class="form-group">
-							<label for="recipient" class="col-xs-3 control-label">recipient</label>
+							<label for="recipient" class="col-xs-3 control-label">Recipient</label>
 							<div class="col-xs-6"><input type="email" class="form-control" name="recipient" placeholder="recipient"></div>
-							<button type="button" class="btn btn-success" onclick="sendVerificationCode()">전송</button>
+							<button type="button" class="btn btn-success" onclick="sendVerificationCode()">인증번호 전송</button>
 						</div>
 						<div class="form-group">
 							<!-- verification code -->
 							<label for="recipient" class="col-xs-3 control-label">Verification Code</label>
 							<div class="col-xs-6"><input type="text" class="form-control" placeholder="verificationCode" name="verificationCode"></div>
-							<!--receiveVerificationCode  true/false : 서버에서 받은 값으로 front 에서 check  ${receiveVerificationCode}-->
+							<!-- receiveVerificationCode  true/false : 서버에서 받은 값으로 front 에서 check  ${receiveVerificationCode} -->
 							<input type="hidden" name="receiveVerificationCode" id="receiveVerificationCode">
 						</div>
 					</div>
 					<div class="modal-footer">
-						<button type="button" class="btn btn-default" data-dismiss="modal">close</button>
+						<button id="closeBtn" type="button" class="btn btn-default" data-dismiss="modal">Close</button>
 						<button type="button" class="btn btn-info" onclick="finalValueCheckForPwReset()">확인</button>
 					</div>
 				</form>
 			</div>
 		</div>
 	</div>
+	
 	<!-- reset password modal -->
 	<div class="modal fade"  id="modal-reset-password">
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<div class="modal-header">
- 					<h2 class="modal-title">Reset password</h2>
+ 					<h2 class="modal-title">Finding My Password</h2>
  				</div>
  				<div id="modal-content-container">
 					<form id="form-reset-password" class="form-horizontal">
 						<div class="modal-body">
 							<div class="form-group">
-								<!-- NewPassword -->
-								<label for="newPassword" class="col-xs-4 control-label">NewPassword</label>
-								<div class="col-xs-6"><input type="password" class="form-control" name="password" placeholder="password" id="newPassword"></div>
+								<!-- New Password -->
+								<label for="newPassword" class="col-xs-4 control-label">New Password</label>
+								<div class="col-xs-6"><input type="password" class="form-control" name="password" placeholder="password" id="New Password"></div>
 							</div>
 							<div class="form-group">
 								<!-- PasswordConfirm -->
-								<label for="confirmPassword" class="col-xs-4 control-label">confirm</label>
-								<div class="col-xs-6"><input type="password" class="form-control" id="confirmPassword" name="confirmPassword" placeholder="ConfirmPassword"></div>
+								<label for="confirmPassword" class="col-xs-4 control-label">Confirm</label>
+								<div class="col-xs-6"><input type="password" class="form-control" id="confirmPassword" name="confirmPassword" placeholder="Confirm"></div>
 							</div>
 						</div>
 						<div class="modal-footer">
-							<button type="button" class="btn btn-success" onclick="resetPassword()">submit</button>
-							<button type="button" class="btn btn-default" data-dismiss="modal">close</button>
+							<button id="closeBtn" type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+							<button type="button" class="btn btn-success" onclick="resetPassword()">Submit</button>
 						</div>
 					</form>
 				</div>
 			</div>
 		</div>
 	</div>
+	
 	<!-- login form -->
 	<div class="container">
 		<form id="form-login" action="signIn" method="post">
@@ -232,7 +230,7 @@
 			</div>
    			<div class="IH-btn">
    				<button type="submit" class="btn btn-primary">Sign In</button>
-   				<button type="button" class="btn btn-success" data-toggle="modal" data-target="#modal-join">Join Us</button>
+   				<button type="button" class="btn btn-success" data-toggle="modal" data-target="#modal-join" onclick="blur();">Join Us</button>
    			</div>
 		</form>
 		<div class="IH-link">

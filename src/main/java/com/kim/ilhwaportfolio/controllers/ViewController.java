@@ -239,7 +239,7 @@ public class ViewController {
 		}
 		
 		 /** 7. 새로운 비밀번호 유효성 검사 및 update */
-		@RequestMapping(value = "resetPassoword", method = RequestMethod.POST ,produces = "application/json; charset=utf8")
+		@RequestMapping(value = "resetPassoword", method = RequestMethod.POST, produces = "application/json; charset=utf8")
 		public @ResponseBody Map<String,Object> resetPassoword(@RequestParam("password") String password, HttpServletRequest request,HttpSession session)throws Exception{
 			Map<String, Object> map = new HashMap<String, Object>();
 			int result=0;
@@ -260,7 +260,7 @@ public class ViewController {
 		}
 		
 		/** 8. mypage 비밀번호 변경을 위한 현재 비밀번호 확인  */
-		@RequestMapping(value = "currentPasswordChk", method = RequestMethod.POST ,produces = "application/json; charset=utf8")
+		@RequestMapping(value = "currentPasswordChk", method = RequestMethod.POST, produces = "application/json; charset=utf8")
 		public @ResponseBody Map<String,Object>  currentPasswordChk(@RequestParam String currentPassword)throws Exception {
 			Map<String, Object> map = new HashMap<String, Object>();
 			int result = memberService.currentPasswordChk(currentPassword);

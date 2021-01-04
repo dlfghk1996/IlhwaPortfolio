@@ -54,7 +54,7 @@ public class BoardReplyServiceImpl implements BoardReplyService{
 
 	// 댓글 삭제
 	@Override
-	public int replyDelete(Board_reply input) throws Exception {
+	public int replyDelete(int input) throws Exception {
 		int result = 0;
 		result = sqlSession.delete("BoardReplyMapper.replyDelete",input);
 		if(result == 0) {

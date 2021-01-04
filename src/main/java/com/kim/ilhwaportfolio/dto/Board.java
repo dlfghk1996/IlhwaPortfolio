@@ -14,7 +14,8 @@ public class Board {
 	private DATE edidate;
 	private int readnum;
 	private int hit;
-
+	private int recount; // 댓글 수
+	
 	// 디비 조회 관련 변수
 	private int start;
 	private int end;
@@ -139,6 +140,14 @@ public class Board {
 
 	public void setEnd(int end) {
 		this.end = end;
+	}
+
+	public int getRecount() {
+		return recount;
+	}
+
+	public void setRecount(int recount) {
+		this.recount = recount;
 	}
 
 	@Override

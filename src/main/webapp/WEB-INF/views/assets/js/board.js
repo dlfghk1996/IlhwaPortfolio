@@ -1,8 +1,6 @@
 $(document).ready(function() {
 	
-// summernote img upload
-//var summernoteChk = $('.content').val();
-//if(summernoteChk != null){}
+	// 썸머노트 이미지 업로드 
 	$('.content').summernote({
     	lang: 'ko-KR',
     	height: 500,
@@ -31,7 +29,7 @@ $(document).ready(function() {
         }
     });
      
-// summernote img upload
+	// summernote img upload
 	function uploadSummernoteImageFile(file, el) {
 	var form_data  = new FormData();
 		form_data.append("uploadfile", file);
@@ -49,7 +47,7 @@ $(document).ready(function() {
 		});
 	}
 	
-// 다중파일 업로드
+	// 다중파일 업로드
     $('#boardForm input[name=file]').MultiFile({
         max: 5, //업로드 최대 파일 갯수 (지정하지 않으면 무한대)
         maxfile: 1024, //각 파일 최대 업로드 크기
@@ -65,7 +63,7 @@ $(document).ready(function() {
         list:"#uploadList" //파일목록을 출력할 요소 지정가능
     });
     
-// 첨부 파일 삭제
+	// 첨부 파일 삭제
 	$(document).on('click', '.fileDeleteBtn', function(){
 		$.ajax({
             type: 'post',
@@ -88,7 +86,7 @@ $(document).ready(function() {
 	
 
 
-// 비회원 비밀번호 확인
+	// 비회원 비밀번호 확인
 	$('.button-nonMember-PwChk').click(function(){
    // 아무값없이 띄어쓰기만 있을 때도 빈 값으로 체크되도록 trim() 함수 호출
        if ($('#pwd').val().trim() == '') {

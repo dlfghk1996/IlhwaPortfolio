@@ -1,40 +1,31 @@
+// madal 닫힐 때 form > input 초기화
+$('.modal').on('hidden.bs.modal', function(e){
+  $(this).find('form')[0].reset()
+}); 
 
-//  bootsrap modal 에서 영역 밖을 선택했을 때 modal 이 닫히는 걸 방지 : backdrop: 'static'
-//  bootsrap modal 에서 ESC 눌렀을 때 modal이 닫히는 걸 방지 : data-keyboard : false
-
-// 모달 공통로직
-// 1. 수동 닫기 버튼
-// 2. 모달open시 입력값 초기화
-
-// 이메일 찾기 modal close 및  html remove
-$(document).on("click","#closebtn",function(){
-	alert("닫기버튼을 누");
-	$('#modal-find-result-email').modal('hide');
-})  
-
-// 전역 변수
-	// 이메일 찾기 화면 바꾸는 변수
-	var findemailform;
-	// 중복검사 이후 id가 변경되었는지 확인하기 위한 변수
-	var dupleCheckedID = "";
+// 이메일 찾기 화면 바꾸는 변수
+var findemailform;
+// 중복검사 이후 id가 변경되었는지 확인하기 위한 변수
+var dupleCheckedID = "";
 	
-// 회원 가입	
+// 회원가입	
 function join(){
 	// id 중복 검사 여부 확인
-	if($('#emailDuplChkAction').val() !='y' || $('#email').val()!=dupleCheckedID){
-		alert('이메일 중복 확인바랍니다.');
+	if($('#emailDuplChkAction').val() != 'y' || $('#email').val() != dupleCheckedID){
+		alert('이메일 중복 검사가 필요합니다.');
 		$('#emailDuplChkAction').eq(0).focus();
 		return false;
 	}
+	
     $.ajax({
-        url: 'join',
-        type: 'POST',
-        data: $('#form-join').serialize(),
+        url : 'join',
+        type : 'POST',
+        data : $('#form-join').serialize(),
       	//서버가 보내는 데이터  Map<String, Object>
         success: function(response){
-				if( response.result == '1'){
-					alert('회원가입이 성공적으로 되었습니다.');
-					location.href='index';
+				if(response.result == '1'){
+					alert('회원가입이 완료되었습니다.');
+					location.reload();
 				}
 				alert(response.result);
         },
@@ -44,17 +35,16 @@ function join(){
     })
 }
 	
-// 아이디 중복확인
+// 아이디 중복검사
 function emailDuplCheck(){
    	if($('#email').val() != ''){
 	   	    $.ajax({
-	        url: 'emailExistCheck',
-	        type: 'POST',
-	        data:{ email : $('#email').val()},
+	        url : 'emailExistCheck',
+	        type : 'POST',
+	        data : {email : $('#email').val()},
 			success: function(response){
-			console.log(response); // json형식인지  다시 확인 
 	        	if(response.result == 0){
-	        		var result=confirm( '사용가능한 이메일 입니다.\n사용하시겠습니까?');
+	        		var result=confirm( '사용 가능한 이메일입니다.\n사용하시겠습니까?');
 					if (result) {
 						dupleCheckedID = $('#email').val();
 						$('#emailDuplChkAction').val('y');
@@ -63,15 +53,14 @@ function emailDuplCheck(){
 						$('#emailDuplChkAction').val('n');
 					}
 				}else{
-	        		alert("이미 사용중인 이메일 입니다.");
+	        		alert("이미 사용중인 이메일입니다.");
 	        		$('#emailDuplChkAction').val('n');
 	        	}
 			},
 	        error: function(response){
 	        	alert('[ajax 통신  error]');
-	        }
-	        
-	    	})
+	        }    
+	    })
    	}else{
    		alert("이메일을 입력해주세요");
    	}
@@ -80,19 +69,21 @@ function emailDuplCheck(){
 // 이메일 찾기
 function findEmail(){
 	  $.ajax({
-		  url: 'findEmail',
+		  url : 'findEmail',
 		  data : $('#form-find-email').serialize(),
           type : 'POST',
           success: function(response){
-          //each() 메서드는 매개 변수로 받은 것을 사용해 반복문과 같이 배열이나 객체의 요소를 검사한다.
+			//each() 메서드는 매개 변수로 받은 것을 사용해 반복문과 같이 배열이나 객체의 요소를 검사한다.
          	if(response.result == null || response.result.length == 0){
-				alert('존재하는 이메일이 없습니다.');
+				alert('존재하지 않는 회원입니다.');
 			}else{
-          	 	$.each(response.result, function(i){
-          	 		$('#findEmailList').append('<tr><td>' + response.result[i] + '</td>');
-				});
 				$('#modal-find-email').modal('hide');
+				$("#findEmailList").children("div").remove();
           		$('#modal-find-result-email').modal('show');
+				$('#findEmailList').append('<div>' + response.result.length + ' 개의 이메일이 등록되어 있습니다.</div>');
+          	 	$.each(response.result, function(i){
+          	 		$('#findEmailList').append('<div class="IH-emailList"> - ' + response.result[i] + '</div>');
+				});
           	}
 		  },
           error: function(){
@@ -104,15 +95,15 @@ function findEmail(){
 // 비밀번호 변경 : 인증번호 전송
 function sendVerificationCode(){
 	$.ajax({
-	  url: 'sendVerificationCode',
-	  data :  $('#form-find-pw').serialize(),
+	  url : 'sendVerificationCode',
+	  data : $('#form-find-pw').serialize(),
       type : 'POST',
-      success: function(response){
+      success : function(response){
       	if(response.result > 0){
-      		alert('입력하신 정보로 인증번호를 보내드렸습니다.');
+      		alert('입력하신 이메일로 인증번호가 전송되었습니다.');
       		$('#receiveVerificationCode').val('y');
       	}else{
-			alert('회원정보 확인을 다시 해주세요.');
+			alert('존재하지 않는 회원입니다.');
 			}
 	  },
 	  error: function(response){
@@ -126,16 +117,16 @@ function finalValueCheckForPwReset(){
 	// 인증 코드를 발급 받았으면 메소드 실행
 	if( $('#receiveVerificationCode').val() != ''){
 		  $.ajax({
-			  url: 'finalValueCheckForPwReset',
-			  data :  $('#form-find-pw').serialize(),
+			  url : 'finalValueCheckForPwReset',
+			  data : $('#form-find-pw').serialize(),
 	          type : 'POST',
-	          success: function(response){
+	          success : function(response){
 	        	  if(response.result== 'success'){
-	        		  alert("인증번호가 확인되었습니다. 비밀번호 변경페이지로 넘어갑니다.");
+	        		  alert("인증되었습니다. 새 비밀번호를 입력해 주세요.");
 	        		  $('#modal-find-pw').modal('hide');
 	        		  $('#modal-reset-password').modal('show');
 	        	  }else{
-	        		  alert('회원정보 및 인증번호가 일치하지 않습니다. 회원님의 정보보호를 위해 다시한번 확인해주세요');
+	        		  alert('회원정보 및 인증번호가 일치하지 않습니다.');
 	        	  }
 			},
 	          error: function(message){
@@ -143,18 +134,19 @@ function finalValueCheckForPwReset(){
 			}
 		 })
 	}else{
-		alert("자세한 확인을 위해 회원정보 확인 및 인증번호를 입력해주세요")
+		alert("회원정보 및 인증번호를 입력해 주세요.")
 	}
 }
+
 // 비밀번호 변경 : 유효성검사
 function resetPassword(){
 	if($('#newPassword').val() == $('#confirmPassword').val()){
 		  $.ajax({
-			  url  : 'resetPassoword',
+			  url : 'resetPassoword',
 			  data :  {password : $('#newPassword').val()},
 	          type : 'POST',
 	          success: function(response){
-	        	  var message  = response.result == -1?"비밀번호는 영문,숫자,특수기호 포함되어야 합니다.":response.result ==1?"비밀번호가 변경되었습니다.":"비밀번호 변경에 실패하였습니다.";
+	        	  var message  = response.result == -1 ? "비밀번호는 영문, 숫자, 특수기호 포함되어야 합니다." : response.result == 1 ? "비밀번호가 변경되었습니다." : "비밀번호 변경에 실패하였습니다.";
 	        	  alert(message);
 	        	  if(response.result == 1 ){location.reload();}
 			  },
@@ -163,6 +155,6 @@ function resetPassword(){
 			}
 		 })
 	}else{
-		alert('비밀번호가 일치하지않습니다.');
+		alert('비밀번호가 일치하지 않습니다.');
 	}
 }
