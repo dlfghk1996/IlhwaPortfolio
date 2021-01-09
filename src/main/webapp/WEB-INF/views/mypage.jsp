@@ -127,17 +127,7 @@
 				</div>
 				<div id="collapseThree" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
 					<div class="panel-body">
-						<form id="form-join" class="form-horizontal">
-							<div class="form-group">
-								<!-- old pw -->
-								<label for="currentPassword" class="col-xs-3 control-label">Old
-									Password</label>
-								<div class="col-xs-6">
-									<input type="password" class="form-control"
-										name="currentPassword" placeholder="Old Password">
-								</div>
-							</div>
-						</form>
+						
 					</div>
 				</div>
 			</div>
