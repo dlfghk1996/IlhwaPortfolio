@@ -13,6 +13,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -116,12 +118,39 @@ public class FileUtils  extends AbstractView {
 
 	/** 파일 삭제 처리 */
 	// 파일 삭제처리 메서드 
-	 public boolean fileDelete(BoardFile boardfile)throws Exception { 
-		 File file = new File("C:/ILHAW/boardFileUpload/"+boardfile.getFilepath());
+	 public boolean fileDelete(List<BoardFile> boardfile)throws Exception { 
+		 boolean result = true;
+		 for(BoardFile f : boardfile) {
+			 File file = new File("C:/ILHAW/boardFileUpload/"+f.getFilepath());
 			 if( file.exists()) {
-				 return file.delete();
-		 	}
-		  return false;
+				 result = file.delete();
+				 if(result == false) {
+					 return result;
+				 }
+			 }
 		 }
+		 return true;
 	}
+	 
+	 /** 이미지 업로드 */
+	 public boolean findImgPath(String imgstr) {
+		 boolean result = true;
+		 Pattern ingPattern = Pattern.compile("<img[^>]*src=[\"']?([^>\"']+)[\"']?[^>]*>");
+		 List<String> imgPathList = new ArrayList<String>();
+			Matcher matcher = ingPattern.matcher(imgstr);
+			while (matcher.find()) {
+				imgPathList.add(matcher.group(1));
+			}
+			for(String r: imgPathList ) {
+				 File file = new File("C:/ILHAW/"+ r);
+				 if( file.exists()) {
+					 result = file.delete();
+					 if(result == false) {
+						 return result;
+					 }
+				 }
+			}
+			return result;
+	  }
+}
 

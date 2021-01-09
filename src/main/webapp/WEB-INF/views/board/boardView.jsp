@@ -26,6 +26,11 @@
 <body>
 <%@ include file="../include/header.jsp" %>
 <div class="container-fluid text-center">
+<form id="content-form" method="post">
+	<input type="hidden" value='${board.content}' name="content"> 
+	<input type="hidden" value="${board.boardnum}" name="boardnum">
+	<input type="hidden" value="${board.writer}" name="writer">
+</form>
 	<div class="row">
 		<h1>자유게시판</h1>
 		<div class="panel-group">
@@ -34,13 +39,12 @@
 				 <div class="panel-heading">
 				 	<h3>${board.subject}</h3>
 				 	<div class="contentInfo1">
+				 		<span>${board.writer}</span>
 				 		<span>작성자이름   &nbsp; | ${board.regdate}</span>
 				 	</div>
 				 	<div class="contentInfo2">
 				 		<ul>
 				 			<li><span>조회  &nbsp;&nbsp;</span>${board.readnum}</li>
-				 			<li><span>추천 수  &nbsp;&nbsp;</span>${board.hit}</li>
-				 			<li>댓글 수 </li>
 				 		</ul>
 				 	</div>
 				 </div>
@@ -59,17 +63,18 @@
       			 </div>
       			
 				 <c:if test="${members.membernum eq board.writer && not empty members.membernum}">
-				 	<button type="button" class="btn btn-success pull-righ t" onclick="location.href='boardUpdate?boardnum=${board.boardnum}'">글 수정</button>
-				 	<button>글 삭제</button>
+				 	<button type="button" value="update" class="btn btn-info pull-righ button-contentOption">글 수정</button>
+				 	<button type="button" value="delete" class="btn btn-secondary pull-righ button-contentOption" >글 삭제</button>
 				 </c:if>
 				  <!-- 비회원 일경우  비밀번호 입력-->
       			 <c:if test="${not empty board.pwd}">
-					<button type="button" class="btn btn-success pull-right" data-toggle="modal" data-target="#modal-nonMember-PwChk">글 수정</button>
-      			 	<button type="button" class="btn btn-success pull-right" data-toggle="modal" data-target="#modal-nonMember-PwChk">글 삭제</button>
+					<button type="button" data-value="update" class="btn btn-success pull-right" data-toggle="modal" data-target="#modal-nonMember-PwChk">글 수정</button>
+      			 	<button type="button" data-value="delete" class="btn btn-success pull-right" data-toggle="modal" data-target="#modal-nonMember-PwChk">글 삭제</button>
       			 </c:if>
 			</div>						
 		</div>
 	</div>
+	
 	<!-- Modal -->
 	<div class="modal fade" id="modal-nonMember-PwChk" role="dialog">
     	<div class="modal-dialog">
@@ -80,13 +85,13 @@
 		          <h4>비밀번호 확인</h4>
 		        </div>
 		        <div class="modal-body" style="padding:40px 50px;">
-		          <form id="form-nonMember-PwChk"role="form" action="nonMemberPwChk" method="POST">
+		          <form id="form-nonMember-PwChk" role="form" method="post">
 		          	<div class="form-group">
 		              <input type="hidden" name="boardnum" value="${board.boardnum}">
 		              <label for="pwd"><span class="glyphicon glyphicon-eye-open"></span> Password </label>
-		              <input type="text" class="form-control" id="pwd" name ="pwd" placeholder="password">
+		              <input type="password" class="form-control" id="pwd" name="pwd" placeholder="password">
 		            </div>
-					<button type="submit" class="btn btn-success btn-block button-nonMember-PwChk" >확인</button>
+					<button type="button" class="btn btn-success btn-block button-nonMember-PwChk" >확인</button>
 		          </form>
 		        </div>
 		        <div class="modal-footer">
@@ -214,47 +219,73 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.7.6/handlebars.min.js"></script>
 <script src="assets/js/boardReply.js"></script>
 <script type="text/javascript">
+	//madal 닫힐 때 form > input 초기화
+	$('.modal').on('hidden.bs.modal', function(e){
+  		$(this).find('form')[0].reset()
+	}); 
 	
- 	var boardnum = "<c:out value='${board.boardnum}'/>";
-	getReplies("replyList"); // 댓글 목록 함수 호출 
+	var boardnum = "<c:out value='${board.boardnum}'/>";
+	getReplies('replyList'); // 댓글 목록 함수 호출 
 	
-	
-	
-	Handlebars.registerHelper('buttonFunction', function(reply_writer,index,replynum,depth){
-		var membernum ="<c:out value='${empty members.membernum?0:members.membernum}'/>";
-		
-
-		var update = '<button type="button" value="update" class="btn btn-primary passwordChkBtn" data-key="'+ index +'" data-idx="'+ replynum +'" data-toggle="popover">수정</button>';
-		var del = '<button type="button" value="delete" class="passwordChkBtn" data-key="'+ index +'" data-idx="'+ replynum +'" data-toggle="popover">삭제</button>';
-		var replyAdd ='';
-		var result;
-		// 대댓글 허용
-		if(depth != 1){
-			replyAdd = '<button type="button" class="replyReplyBtn" data-key="'+ index +'"  data-idx="'+ replynum +'"><i class="fas fa-plus-circle"></i></button>';
-		}
-		
-		// 1. 현재 이용자: 비회원  && 댓글작성자: 비회원	
-		if(membernum == 0 && reply_writer == 0){
-			result = update+del+replyAdd;	
-			
-		// 2. 현재 이용자: 회원 && 댓글작성자 == 현재이용자
-		}else if(membernum > 0 && reply_writer == membernum){
-			var mupdate = '<button type="button" value="update" class="memberReplyUpdate btn btn-primary update" data-key="'+index+'" data-idx="'+replynum+'">수정</button>';
-			var mdel = '<button type="button" value="delete" class="memberReplyDelete delete" data-key="'+index+'"data-idx="'+replynum+'">삭제</button>';
-			result = mupdate+mdel+replyAdd	
-		
-		// 3. 현재 이용자: 비회원  && 댓글작성자: 회원  ||  현재 이용자: 회원  && 댓글작성자 != 현재 이용자 
+    // 회원 게시글 삭제 및 수정
+	$('.button-contentOption').click(function(){
+		var url;
+		if($(this).val() == 'delete'){
+			url = 'deleteContent';
 		}else{
-			return replyAdd;
+			url = 'boardUpdate';
 		}
-		return result;
+		$('#content-form').attr('action',url).submit();
+	 });	
+	
+	// 비회원 비밀번호 확인 modal창에  클릭이벤트 data(delete/update) 넘기기
+	  $('#modal-nonMember-PwChk').on('show.bs.modal', function(event) {          
+          var btnValue = $(event.relatedTarget).data('value');
+          $('.button-nonMember-PwChk').attr('value',btnValue);
+	})
+	
+	// 비회원 게시글 삭제 
+	$('.button-nonMember-PwChk').click(function(){
+		if($(this).val() == "delete"){
+			url = 'deleteContent';
+			if(confirm("게시물을 삭제 하시겠습니까? 게시물을 삭제하시면, 해당 게시물의 댓글도 삭제됩니다.")){
+				url = 'deleteContent';		
+			}	
+		}else{
+			url = 'boardUpdate';
+		}
+		$('#form-nonMember-PwChk').attr('action',url).submit();
+	 });	
+
+	// 댓글 삭제 수정 권한 검사
+	Handlebars.registerHelper('buttonFunction', function(reply_writer,index,replynum,depth){
+	var membernum ="<c:out value='${empty members.membernum?0:members.membernum}'/>";
+	
+
+	var update = '<button type="button" value="update" class="btn btn-primary passwordChkBtn" data-key="'+ index +'" data-idx="'+ replynum +'" data-toggle="popover">수정</button>';
+	var del = '<button type="button" value="delete" class="passwordChkBtn" data-key="'+ index +'" data-idx="'+ replynum +'" data-toggle="popover">삭제</button>';
+	var replyAdd ='';
+	var result;
+	// 대댓글 허용
+	if(depth != 1){
+		replyAdd = '<button type="button" class="replyReplyBtn" data-key="'+ index +'"  data-idx="'+ replynum +'"><i class="fas fa-plus-circle"></i></button>';
+	}
+	
+	// 1. 현재 이용자: 비회원  && 댓글작성자: 비회원	
+	if(membernum == 0 && reply_writer == 0){
+		result = update+del+replyAdd;	
 		
-		//}else if(membernum == 0 && reply_writer > 0){
-			//return replyAdd;
-		
-		//};
-		
-		
+	// 2. 현재 이용자: 회원 && 댓글작성자 == 현재이용자
+	}else if(membernum > 0 && reply_writer == membernum){
+		var mupdate = '<button type="button" value="update" class="memberReplyUpdate btn btn-primary update" data-key="'+index+'" data-idx="'+replynum+'">수정</button>';
+		var mdel = '<button type="button" value="delete" class="memberReplyDelete delete" data-key="'+index+'"data-idx="'+replynum+'">삭제</button>';
+		result = mupdate+mdel+replyAdd	
+	
+	// 3. 현재 이용자: 비회원  && 댓글작성자: 회원  ||  현재 이용자: 회원  && 댓글작성자 != 현재 이용자 
+	}else{
+		return replyAdd;
+	}
+	return result;
 	})
 </script>
 </html>

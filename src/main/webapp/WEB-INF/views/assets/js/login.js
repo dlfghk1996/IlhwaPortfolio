@@ -1,3 +1,40 @@
+
+
+$(function(){
+  jQuery.validator.addMethod("noSpace", function(value, element) {
+		return value.indexOf(" ") < 0 && value != ""; 
+		}, "공백을 입력하실수 없습니다.");
+	$("#form-login").validate({
+		rules:{
+			email:{
+				required : true, //필수입력여부
+				email : true, 	//이메일형식
+				noSpace: true
+			},
+			password:{
+				required : true, //필수입력여부
+				noSpace: true
+			},
+		},
+		messages:{
+			email:{
+				required : "이메일은 필수 입력입니다.",
+				email : "잘못된 형식 입니다."
+			},
+			password: {
+				required : "비밀번호는 필수 입력입니다.",
+			},
+		}
+	})
+});
+
+
+
+
+
+
+
+
 // madal 닫힐 때 form > input 초기화
 $('.modal').on('hidden.bs.modal', function(e){
   $(this).find('form')[0].reset()

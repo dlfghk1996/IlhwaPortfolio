@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
-
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.support.RequestContextUtils;
 
@@ -43,6 +43,9 @@ public class BoardController {
 
 	@Autowired
 	WebHelper webHelper;
+	
+	@Autowired
+	FileUtils fileUtils;
 
 	/** 게시판 */
 	// 데이터 형태를 JSON으로 보내주면, 서버쪽에서도 JSON으로 받아야 한다.
@@ -129,50 +132,36 @@ public class BoardController {
 	}
 
 	/** 글 수정 페이지 회원 */
-	@RequestMapping(value = "boardUpdate", method = RequestMethod.GET)
-	public String boardUpdate(@RequestParam(value = "boardnum", required = false, defaultValue = "0") int boardnum,
+	@RequestMapping(value = "boardUpdate", method = RequestMethod.POST)
+	public String boardUpdate(@RequestParam(value = "boardnum", required = false, defaultValue = "0") int boardnum, Board board,
 			Model model, HttpServletRequest request) throws Exception {
-		Member member = (Member) webHelper.getSession("members", "");
 
-		Map<String, ?> flashMap = RequestContextUtils.getInputFlashMap(request);
-		if (flashMap != null) {
-			int nonMemberBoardNum = (int) flashMap.get("boardnums");
-			boardnum = nonMemberBoardNum;
-		}
-		Board board = boardService.viewContent(boardnum);
-		if (board == null) {
-			webHelper.redirect("잘못된 접근 입니다. 존재하지않는 게시물 입니다.");
-		}
-		// 비회원이 다른 회원 게시물 접근
-		if (board.getPwd() != null || member == null) {
-			if (flashMap == null) {
+
+		// 회원 수정
+		Member member = (Member) webHelper.getSession("members", "");
+		Board board1 = boardService.viewContent(boardnum);
+		// 회원의 수정 페이지  접근권한 확인
+		if(member != null) {
+			if (member.getMembernum() != board1.getWriter()) {
 				webHelper.redirect("접근권한이 없습니다.");
 			}
-		} else {
-			// 회원이 다른 회원 게시물 접근
-			if (member.getMembernum() != board.getWriter()) {
+		// 비회원 수정페이지 접근 권한 확인
+		}else {
+			board = boardService.nonMemberPwChk(board);
+			if(board == null) {
 				webHelper.redirect("접근권한이 없습니다.");
 			}
+			boardService.viewContent(board.getBoardnum());
 		}
-		// 첨부파일
+		
+
+		// 첨부파일 목록 
 		List<BoardFile> boardfile = boardService.attachFileList(boardnum);
 		if (boardfile != null) {
 			model.addAttribute("boardfile", boardfile);
 		}
 		model.addAttribute("board", board);
 		return "board/boardUpdate";
-	}
-
-	/** 비회원 수정 페이지 비밀 번호 확인 */
-	@RequestMapping(value = "nonMemberPwChk", method = RequestMethod.POST)
-	public String boardUpdate(Board board, RedirectAttributes redirect) throws Exception {
-		board = boardService.nonMemberPwChk(board);
-		if (board == null) {
-			webHelper.redirect("접근권한이 없습니다.");
-		}
-		redirect.addFlashAttribute("boardnums", board.getBoardnum());
-		return "redirect:boardUpdate";
-
 	}
 
 	/** 글 수정 do */
@@ -183,7 +172,6 @@ public class BoardController {
 		FileUtils fileUtils = new FileUtils();
 		List<BoardFile> filelist = fileUtils.saveBordDTO(fileList);
 		for (BoardFile f : filelist) {
-			System.out.println("첨부파일 업데이트 for문 진입");
 			f.setBoardnum(board.getBoardnum());
 			int insertResult = boardService.attachFile(f);
 			if (insertResult == 0) {
@@ -194,21 +182,54 @@ public class BoardController {
 		if (result == 0) {
 			System.out.println("예외처리 실행");
 		}
-		return "redirect:board";
+		return "redirect:boardView?boardnum=" + board.getBoardnum();
 	}
 
-	/** 썸머 노트 이미지 업로드 */
+	/** 게시글 삭제 전 첨부파일 삭제*/
+	@RequestMapping(value = "deleteContent", method = RequestMethod.POST)
+	public String deleteContent(Board board) throws Exception {
+		// System.out.println("deleteContent 서블릿 들어왔음");
+		Member member = (Member) webHelper.getSession("members", null);
+		
+		// 세션에 로그인이 안되어있을 경우
+		if(member == null) {
+			board = boardService.nonMemberPwChk(board);
+			if(board == null) {
+				webHelper.redirect("접근권한이 없습니다.");
+			}
+		}else {
+			if (member.getMembernum() != board.getWriter()) {
+				webHelper.redirect("접근권한이 없습니다.");
+			}
+		}
+		// 첨부파일 삭제
+		List<BoardFile> boardFile= boardService.attachFileList(board.getBoardnum());
+		if(!boardFile.isEmpty()) {
+			if(fileUtils.fileDelete(boardFile)) {
+				boardService.attachFileDelete(boardFile.get(0));
+				System.out.println("에러 찾기2");
+			}else {
+				System.out.println("파일 삭제 예외처리");
+			}
+		}
+
+		boolean result = fileUtils.findImgPath(board.getContent());
+		boardService.deleteContent(board);
+		
+		return "redirect:board";
+	} 
+
+	/** 썸머 노트 이미지 업로드  */
 	@ResponseBody
 	@RequestMapping(value = "imgUpload", method = RequestMethod.POST)
 	public String imgUpload(MultipartHttpServletRequest request) throws Exception {
 		List<MultipartFile> fileList = request.getFiles("uploadfile");
 		FileUtils fileUtils = new FileUtils();
 		String filename = fileUtils.uploadFile(fileList);
-		System.out.println("imgupload 서블릿: " + filename );
 		return filename;
 	}
 
-	/** 첨부파일 다운로드 */
+	/** 첨부파일 다운로드  */
 	@ResponseBody
 	@RequestMapping(value = "attachFileDownload", method = RequestMethod.GET)
 	public void attachFileDownload(@RequestParam("filepath") String filepath, HttpServletRequest request,
@@ -222,7 +243,7 @@ public class BoardController {
 		fileUtils.renderMergedOutputModel(map, request, response);
 	}
 
-	/** 첨부파일 삭제 */
+	/** 첨부파일 삭제 
 	@ResponseBody
 	@RequestMapping(value = "attachFileDelete", method = RequestMethod.POST)
 	public int attachFileUpdate(BoardFile boardfile) throws Exception {
@@ -232,17 +253,24 @@ public class BoardController {
 			DeleteResult = boardService.attachFileDelete(boardfile);
 		}
 		return DeleteResult;
-	}
+	}*/
 
 	/** 댓글 작성 */
 	@RequestMapping(value = "replyWrite", method = RequestMethod.POST)
 	@ResponseBody
 	public String replyWrite(Board_reply board_reply) throws Exception {
-		int result = boardReplyService.addReply(board_reply);
-		if (board_reply.getParent() != 0) {
-			// 같은 부모의 자식들의 순번과 새로운 순번이 같다면  새로운 순번에 +1을 해준다. (1,2,3)
-			boardReplyService.replySeqUpdate(board_reply);
+		if(board_reply.getParent() != 0) {
+			Board_reply childReply = boardReplyService.getChildrenSeq(board_reply.getParent());
+			board_reply.setDepth(childReply.getDepth());
+			board_reply.setSeq(childReply.getSeq());
+			// 기존 순번이 현재 순번과 같거나 클경우 +1 을 해준다.
+			boardReplyService.replySeqRearrange(board_reply);
+		}else {
+			int maxseq = boardReplyService.replyMaxSeq(board_reply.getReply_boardnum());
+			board_reply.setSeq(maxseq);
 		}
+		int result = boardReplyService.addReply(board_reply);
+
 		return "";
 	}
 
@@ -274,8 +302,10 @@ public class BoardController {
 			if (parm.get("value").equals("delete")) {
 				int numberofChildren = boardReplyService.getReplyChildren(reply.getReplynum());
 				if(numberofChildren > 0) {
+					System.out.println("들어옴");
 					boardReplyService.parentReplyDelete(reply.getReplynum());
 				}else {
+					//boardReplyService.deleteReplySeqUpdate(reply.getReplynum());
 					boardReplyService.replyDelete(reply.getReplynum());
 				}
 			}
@@ -301,6 +331,7 @@ public class BoardController {
 		if(numberofChildren > 0) {
 			boardReplyService.parentReplyDelete(replynum);
 		}else {
+			//boardReplyService.deleteReplySeqUpdate(replynum);
 			boardReplyService.replyDelete(replynum);
 		}
 		return 0;

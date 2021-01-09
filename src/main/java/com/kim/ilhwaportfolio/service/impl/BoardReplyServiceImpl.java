@@ -63,17 +63,20 @@ public class BoardReplyServiceImpl implements BoardReplyService{
 		return result;
 	}
 	
-    // 댓글 순번 업데이트
+    // 댓글 MAX 순번 
 	@Override
-	public int replySeqUpdate(Board_reply input) throws Exception {
+	public int replyMaxSeq(int input) throws Exception {
 		int result = 0;
-		result = sqlSession.update("BoardReplyMapper.replySeqUpdate",input);
+		result = sqlSession.selectOne("BoardReplyMapper.replyMaxSeq",input);
+		if(result == 0) {
+			throw new NullPointerException("result == 0");
+		}
 		return result;
 	}
 	
 	// 댓글 삭제후 재정렬
 	@Override
-	public int deleteReplySeqUpdate(Board_reply input) throws Exception {
+	public int deleteReplySeqUpdate(int input) throws Exception {
 		int result = 0;
 		result = sqlSession.update("BoardReplyMapper.deleteReplySeqUpdate",input);
 		if(result == 0) {
@@ -101,5 +104,22 @@ public class BoardReplyServiceImpl implements BoardReplyService{
 		return result;
 	}
 
+	// 같은 순번이 있다면 +1
+	@Override
+	public int replySeqRearrange(Board_reply input) throws Exception {
+		int result = 0;
+		result = sqlSession.update("BoardReplyMapper.replySeqRearrange",input);
+		return 0;
+	}
 
+	// 자식 순번 가져오기
+	@Override
+	public Board_reply getChildrenSeq(int input) throws Exception {
+		Board_reply result = null;
+		result = sqlSession.selectOne("BoardReplyMapper.getChildrenSeq",input);
+		if(result == null) {
+			throw new NullPointerException("result == null");
+		}
+		return result;
+	}
 }

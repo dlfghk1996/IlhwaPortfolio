@@ -89,6 +89,18 @@ public class BoardServiceImpl implements BoardService {
 		return result;
 	}
 
+	// 게시물 삭제
+	@Override
+	public int deleteContent(Board input) throws Exception {
+		int result=0;
+		result = sqlSession.delete("BoardMapper.deleteContent",input);
+		if(result == 0 ) {
+			throw new NullPointerException("result ==  0");
+		}
+		return 0;
+	}
+	
+	
 	// 첨부 파일
 	@Override
 	public int attachFile(BoardFile input) throws Exception {
@@ -118,5 +130,4 @@ public class BoardServiceImpl implements BoardService {
 		}
 		return result;
 	}
-
 }

@@ -11,27 +11,25 @@
 		<result property="name" column="name" />
 		<result property="gender" column="gender" />
 		<result property="birthdate" column="birthdate" />
-		<result property="motto" column="motto" />
 		<result property="regdate" column="regdate" />
 	</resultMap>
 
-<!-- join -->
+	<!-- join -->
 	<insert id="join" parameterType="com.kim.ilhwaportfolio.dto.Member" >
-		INSERT INTO MEMBER VALUES(MEMBERNUM_PK.NEXTVAL,#{email},#{password},#{name},#{gender},#{birthdate},#{motto},SYSDATE ) 
+		INSERT INTO MEMBER VALUES(MEMBERNUM_PK.NEXTVAL,#{email},#{password},#{name},#{gender},#{birthdate},SYSDATE) 
 	</insert> 
 
-
-<!-- login & mypage-->
+	<!-- login & mypage-->
 	<select id="signIn" parameterType="com.kim.ilhwaportfolio.dto.Member" resultMap="member">
 		SELECT * FROM MEMBER WHERE email = #{email} AND password = #{password}
 	</select> 
 	
-<!-- logincookie -->
+	<!-- logincookie -->
 	<select id="getEmailCookie" parameterType="int" resultType="String">
 		SELECT email from MEMBER WHERE membernum = #{Value}
 	</select> 
 	
-<!-- emailExistCheck (회원가입)-->
+	<!-- emailExistCheck (회원가입)-->
 	<select id="emailExistCheck" parameterType="com.kim.ilhwaportfolio.dto.Member" resultType="int">
 		SELECT count(*) from MEMBER 
 		<choose>
@@ -40,32 +38,32 @@
 		</choose>
 	</select> 
 	
-<!-- findEmail -->
+	<!-- findEmail -->
 	<select id="findEmail" parameterType="com.kim.ilhwaportfolio.dto.Member" resultType="String">
 		SELECT email from MEMBER WHERE name = #{name} and birthdate = #{birthdate}
 	</select>
 
-<!-- resetPw : 비밀번호 재 설정 -->
+	<!-- resetPw : 비밀번호 재 설정 -->
 	<update id="resetPassword" parameterType="com.kim.ilhwaportfolio.dto.Member">
 		UPDATE MEMBER SET password = #{password} WHERE email = #{email}
 	</update>
 	
-<!-- memberInfo 출력-->
+	<!-- memberInfo 출력-->
 	<select id="memberInfo" parameterType="com.kim.ilhwaportfolio.dto.Member" resultMap ="member">
 		SELECT * from MEMBER WHERE email = #{email}
 	</select>
 	
-<!-- memberInfo 현재 비밀번호  확인/ 로그인 mapper와 합칠지 고민-->
+	<!-- memberInfo 현재 비밀번호  확인/ 로그인 mapper와 합칠지 고민-->
 	<select id="currentPasswordChk" parameterType="com.kim.ilhwaportfolio.dto.Member" resultType="int">
 		SELECT count(*)  from MEMBER WHERE password = #{password}
 	</select>
 	
-<!-- memberInfo: 회원 정보 재 설정 -->
+	<!-- memberInfo: 회원 정보 재 설정 -->
 	<update id="modifyMemberInfo" parameterType="com.kim.ilhwaportfolio.dto.Member">
 		UPDATE MEMBER SET name = null, motto = #{motto}, gender = #{gender} WHERE email = #{email}
 	</update>
 	
-<!-- signout : 회원 탈퇴-->
+	<!-- signout : 회원 탈퇴-->
 	<delete id="signout" parameterType="com.kim.ilhwaportfolio.dto.Member">
 		DELETE FROM MEMBER WHERE email = #{email} AND password = #{password}
 	</delete>

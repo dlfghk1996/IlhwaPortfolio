@@ -13,7 +13,7 @@
 	
 	<!-- 댓글 목록 -->
 	<select id="getReplyList" parameterType="int" resultType="com.kim.ilhwaportfolio.dto.Board_reply">
-		SELECT * FROM boardreply WHERE reply_boardnum = ${value} ORDER BY replynum ASC
+		SELECT * FROM boardreply WHERE reply_boardnum = ${value} ORDER BY seq ASC
 	</select>
 	
 	<!-- 비회원 댓글 비밀번호 확인 -->
@@ -41,13 +41,46 @@
 		UPDATE boardreply SET del = 'y' WHERE replynum = #{replynum}
 	</update>
 	
-	<!-- 댓글 순번 업데이트 : 같은 부모의 자식들의 마지막 순번에 +1을 해준다. (1,2,3)-->
-	<update id="replySeqUpdate" >
-		UPDATE boardreply SET
-		seq = (SELECT MAX(Seq) FROM boardreply WHERE parent=#{parent})+1,
-		depth =  depth+1
-		WHERE replynum = #{replynum}
-	</update>
-
 	
+	<select id="getChildrenSeq" resultType="com.kim.ilhwaportfolio.dto.Board_reply" parameterType="int">
+		SELECT MAX(seq)+1 as seq, min(depth)+1 as depth FROM BOARDREPLY WHERE replynum= #{parent} OR PARENT = #{parent}
+	</select>
+	
+	<select id="replyMaxSeq" resultType="int"> 
+		SELECT NVL(MAX(seq),0)+1 FROM boardreply WHERE reply_boardnum = ${value}
+	</select>
+	
+	<!-- 같은 순번이 있다면 +1 -->
+	<update id="replySeqRearrange">
+		UPDATE boardreply SET seq = seq + 1 
+  		WHERE reply_boardnum = #{reply_boardnum} 
+  		AND seq <![CDATA[>=]]>  #{seq} 
+	</update>
+	
+	<!-- 댓글 삭제 후 순번 재정렬 
+	<update id="deleteReplySeqUpdate" parameterType="int">
+		UPDATE boardreply SET seq = seq - 1 
+  		WHERE reply_boardnum = #{reply_boardnum} 
+  		AND seq <![CDATA[>]]> (SELECT seq FROM boardreply WHERE replynum = ${value})  
+	</update>
+	
+	<update id="deleteReplySeqUpdate" parameterType="int">
+	    UPDATE 
+        (SELECT
+                b.seq, c.seq, c.boardnum 
+        FROM
+            BOARDREPLY b, 
+            (SELECT
+                *
+            FROM
+                BOARDREPLY
+            WHERE
+                replynum = ${value}
+            ) c 
+        WHERE
+        b.replynum = c .replynum)        
+   		SET  b.seq = b.seq - 1     
+   		WHERE b.reply_boardnum = c.reply_boardnum 
+   		AND b.seq <![CDATA[>]]> c.seq
+	</update>-->
 </mapper>

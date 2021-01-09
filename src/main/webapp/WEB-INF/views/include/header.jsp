@@ -29,9 +29,13 @@
 						<li><a href="login">Login</a></li>
 					</c:when>
 					<c:otherwise>
-						<li><a href="#">${memberDTO.name}</a></li>
-						<li><a href="myPage">MyPage</a></li>
-						<li><a href="logOut">LogOut</a></li>
+						<li class="dropdown">
+							<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">${memberDTO.name} 님<span class="caret"></span></a>
+							<ul class="dropdown-menu" role="menu">
+								<li><a href="myPage">MyPage</a></li>
+								<li><a href="logOut">LogOut</a></li>
+							</ul>
+						</li>
 					</c:otherwise>
 				</c:choose>
 			</ul>

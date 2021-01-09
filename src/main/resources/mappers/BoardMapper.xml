@@ -65,6 +65,11 @@
 	<select id="nonMemberPwChk" resultType="com.kim.ilhwaportfolio.dto.Board">
 		SELECT * FROM board WHERE pwd = #{pwd} AND boardnum = ${boardnum}
 	</select>
+	
+	<!-- 게시물 삭제 -->
+	<delete id="deleteContent">
+		DELETE FROM board WHERE boardnum = #{boardnum}
+	</delete>
 		
 	<!-- 페이지 네이션: 게시글 전체 수 -->
 	<select id="totalContent" resultType="int">
@@ -87,7 +92,7 @@
 	</select>
 	
 	<!-- 첨부 파일 삭제 -->
-	<delete id="attachFileDelete" >
-		DELETE FROM boardfile WHERE filepath = #{filepath}
+	<delete id="attachFileDelete">
+		DELETE FROM boardfile WHERE filepath = #{filepath} OR boardnum = #{boardnum}
 	</delete>
 </mapper>

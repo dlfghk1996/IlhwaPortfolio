@@ -17,7 +17,7 @@ public class EmailMasking {
 
 		   // 마스킹 처리할 부분인 emailId 추출
 		   // 방법: 그룹을 이용한 추출: 정규식 패턴에서    "()" 를 기준으로 그룹화한다.  (1그룹)(2그룹)(3그룹)
-		   //  String emailWithoutDomain = matcher.group(1); 
+		   // String emailWithoutDomain = matcher.group(1); 
 			
 			  /*
 			  * "emailWithoutDomain" 의 길이를 기준으로 세글자 초과인 경우 뒤 세자리를 마스킹 처리하고,
@@ -31,23 +31,21 @@ public class EmailMasking {
 		    	  // find() 메소드를 사용해야 커서가 이동하므로 반드시 꼭 써준다
 		    	  Matcher matcher = Pattern.compile(regex).matcher(finedEmailList.get(i));
 		    	  if (matcher.find()) {
-		    		  System.out.println("matcher : "+matcher);
 		    		  String emailWithoutDomain = matcher.group(1); 
-		    	  
 		    		  int length = emailWithoutDomain.length();
-				      if (length < 3) {
+				      if (length < 4) {
 				    	  char[] c = new char[length];
 				    	  Arrays.fill(c, '*');  // [*,*,*]
 				    	  emails = finedEmailList.get(i).replace(emailWithoutDomain, String.valueOf(c));
-				      } else if (length == 3) {
-				    	  emails = finedEmailList.get(i).replaceAll("\\b(\\S+)[^@][^@]+@(\\S+)", "$1**@$2");
+				      } else if (length == 4) {
+				    	  emails = finedEmailList.get(i).replaceAll("\\b(\\S+)[^@][^@][^@]+@(\\S+)", "$1***@$2");
 				      } else {
-				    	  emails = finedEmailList.get(i).replaceAll("\\b(\\S+)[^@][^@][^@]+@(\\S+)", "$1****@$2");
-					      }
+				    	  emails = finedEmailList.get(i).replaceAll("\\b(\\S+)[^@][^@][^@][^@]+@(\\S+)", "$1****@$2");
+				      	}
 					      email.add(emails);
-			      	}
-			      }
-			      return email;
+				}
+		    }
+			 return email;
 		}
 	}
 

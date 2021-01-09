@@ -1,6 +1,7 @@
 package com.kim.ilhwaportfolio.helper;
 
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.regex.Pattern;
 
@@ -14,6 +15,7 @@ import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
 
 import com.kim.ilhwaportfolio.dto.Member;
+import com.sun.org.apache.xerces.internal.impl.xpath.regex.ParseException;
 
 @Component
 public class MemberValidator implements Validator{
@@ -71,18 +73,12 @@ public class MemberValidator implements Validator{
 			String pw_regex = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[()$@$!%*#?&]).*$";
 			boolean pw_check = Pattern.matches(pw_regex, member.getPassword());
 			// if true 일경우 : 패턴 안맞음
-			if (!(pw_check) || member.getPassword().length() > 15 || member.getPassword().length() < 5) {
-			errors.rejectValue("password", "Pattern.member.password", "passwordError");
+			if (!(pw_check)) {
+				errors.rejectValue("password", "Pattern.member.password", "passwordError");
 			}
-	//비밀번호 확인체크
-			//ValidationUtils.rejectIfEmptyOrWhitespace(errors, "userpwCK", "NotBlank.member.userpwCK","비밀번호를 한번 더 입력해주세요!!");
-			// if true 일경우 : 비밀번호 일치하지않음
-			//if (!(member.isPwEqualToCheckPw())) {
-			//	member.toString();
-			//	errors.rejectValue("userpwCK", "noMatch", "Notmatch.member.userpwCK","비밀번호 일치 오류");
-
-			//}
-
+			if (member.getPassword().length() > 15 || member.getPassword().length() < 5) {
+				errors.rejectValue("password", "Length.member.password", "passwordError");
+			}
 	//이름체크
 			ValidationUtils.rejectIfEmptyOrWhitespace(errors, "name", "NotBlank.member.name");
 			String name_regex = "^[가-힣]*$";
@@ -93,9 +89,25 @@ public class MemberValidator implements Validator{
 				errors.rejectValue("name", "Pattern.member.name");
 			}
 	//생년월일 체크(생년월일 형식)
-			//date - > String casting
-			System.out.println(member.getBirthdate());
 			ValidationUtils.rejectIfEmptyOrWhitespace(errors, "birthdate", "NotBlank.member.birthdate");
+			System.out.println("생년월일 : "+member.getBirthdate());
+			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+			try {
+				dateFormat.setLenient(false);
+		        dateFormat.parse(member.getBirthdate());
+		        //예)2007 ~ 1921(시작~까지) 나이만 신청
+		        Calendar current = Calendar.getInstance();
+		        // 회원 나이
+		        int memberAge = current.get(Calendar.YEAR) - Integer.parseInt(member.getBirthdate().substring(0, 3));
+		        if(!(memberAge >= 14) || !(memberAge <= 100)){
+		        	System.out.println("연령제한");
+		        	errors.rejectValue("birthdate", "Limit.member.birthdate");
+		        }
+			} catch (ParseException e) {
+				errors.rejectValue("birthdate", "Pattern.member.birthdate");
+			}
+			
+		
 			//String bith_regex = "^((19|20)\\d\\d)?([- /.])?(0[1-9]|1[012])([- /.])?(0[1-9]|[12][0-9]|3[01])$";
 			//boolean birth_check = Pattern.matches(bith_regex, birthdate);
 			//System.out.println("생년월일 에러" + member.getBirthdate());

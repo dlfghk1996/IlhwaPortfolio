@@ -13,7 +13,6 @@ public class Member {
 	private String name;
 	private String gender;
 	private String birthdate;
-	private String motto;
 	private String regdate;
 
 
@@ -67,15 +66,7 @@ public class Member {
 	public void setBirthdate(String birthdate) {
 		this.birthdate = birthdate;
 	}
-
-	public String getMotto() {
-		return motto;
-	}
-
-	public void setMotto(String motto) {
-		this.motto = motto;
-	}
-
+	
 	public String getRegdate() {
 		return regdate;
 	}

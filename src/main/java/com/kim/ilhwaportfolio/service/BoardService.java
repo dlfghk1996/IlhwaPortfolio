@@ -29,6 +29,9 @@ public interface BoardService {
 	// 비회원 글수정 비밀번호 확인
 	public Board nonMemberPwChk(Board input) throws Exception;
 	
+	// 게시물 삭제
+	public int deleteContent(Board input) throws Exception;
+	
 	// 첨부파일
 	public int attachFile(BoardFile input) throws Exception;
 	

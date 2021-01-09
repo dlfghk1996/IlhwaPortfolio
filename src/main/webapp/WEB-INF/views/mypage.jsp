@@ -9,7 +9,7 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>MyPage</title>
-	
+
 	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atma:wght@500&display=swap">
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
 	<link rel="stylesheet" href="assets/css/common.css" type="text/css">
@@ -18,131 +18,126 @@
 <body>
 	<%@ include file="include/header.jsp"%>
 	<div class="container">
-		<div role="tabpanel">
+		<h1 class="page-header">회원정보 수정</h1>
 
-			<!-- Nav tabs -->
-			<ul class="nav nav-tabs">
-				<li class="active"><a href="#memberInfo" data-toggle="tab">회원정보
-						변경</a></li>
-				<li><a href="#memberWithdrawal" data-toggle="tab">회원탈퇴</a></li>
-			</ul>
-
-			<!-- Tab panes -->
-			<div class="tab-content">
-				<div class="tab-pane active" id="memberInfo">
-					<!-- 계정 이메일 , -->
-					<form id="form-memberinfo" class="form-horizontal">
-						<input type="hidden" name="email" id="email"
-							value="${member.email}">
-						<div class="table-responsive">
-							<table class="table table-hover">
-								<tbody>
-									<tr>
-										<th class="col-xs-3">계정 이메일</th>
-										<td class="col-xs-9">${member.email}</td>
-									</tr>
-									<tr>
-										<th class="col-md-3">비밀번호</th>
-										<td class="col-xs-9">
-											<button class="btn btn-secondary" type="button"
-												data-toggle="collapse" data-target="#changePwForm"
-												aria-expanded="false" aria-controls="changePwForm">비밀번호
-												변경</button>
-											<div id="changePwForm" class="panel-collapse collapse">
-												<div class="form-group">
-													<label for="currentPassword" class="col-xs-3">현재
-														비밀번호</label>
-													<div class="col-xs-4">
-														<input type="password" class="form-control"
-															name="currentPassword" id="currentPassword">
-													</div>
-													<button type="button" class="btn btn-default"
-														id="currentPasswordChk">확인</button>
-													<!-- 비밀번호 확인체크  -->
-													<input type="hidden" name="passwordChkok"
-														id="passwordChkok">
-												</div>
-												<div class="form-group">
-													<label for="changePassword" class="col-xs-3">새로운
-														비밀번호</label>
-													<div class="col-xs-4">
-														<input type="password" class="form-control"
-															name="password" id="password">
-													</div>
-												</div>
-												<div class="form-group">
-													<label for="changePasswordChk" class="col-xs-3">새로운
-														비밀번호 확인</label>
-													<div class="col-xs-4">
-														<input type="password" class="form-control"
-															name="changePasswordChk" id="changePasswordChk">
-													</div>
-												</div>
-												<div class="col-xs-offset-3">
-													<button type="button" class="btn btn-default"
-														id="changePasswordBtn">비밀번호 변경</button>
-												</div>
-											</div>
-										</td>
-									</tr>
-									<tr>
-										<th class="col-md-3">이름</th>
-										<td class="col-xs-9"><label for="changeName"></label>
-											<div class="col-xs-4">
-												<input type="text" class="form-control" name="name"
-													id="name" value="${member.name}">
-											</div></td>
-									</tr>
-									<tr>
-										<th class="col-md-3">성별</th>
-										<td class="col-xs-9">여자 <input type="radio" name="gender"
-											id="f" value="f" ${member.gender == 'f'?'checked':''}>
-											남자 <input type="radio" name="gender" id="m" value="m">
-										</td>
-									</tr>
-									<tr>
-										<th class="col-md-3">생년월일</th>
-										<td class="col-xs-9">${member.birthdate}</td>
-									</tr>
-									<tr>
-										<th class="col-md-3">한마디</th>
-										<td class="col-xs-9"><label for="motto">Comment:</label>
-											<textarea class="form-control" rows="5" id="motto"
-												name="motto">${member.motto}</textarea></td>
-									</tr>
-								</tbody>
-							</table>
-						</div>
-						<div>
-							<button type="button" class="btn btn-success"
-								id="modifyMemberInfo">수정하기</button>
-						</div>
-					</form>
+		<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+			<div class="panel panel-default">
+				<div class="panel-heading" role="tab" id="headingOne">
+					<h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">개인정보 수정</a></h4>
 				</div>
-				<div class="tab-pane" id="memberWithdrawal">
-					<div class="text-center item">
-						<div class="shadow-box-example z-depth-1-half ">
-							<div class="heading">
-								<h1>회원탈퇴</h1>
-							</div>
-							<p>HWAZZANG 페이지를 다시 사용할 일이 없어 계정을 없애고 싶으시면 계정 삭제를 처리해드리겠습니다.
-								삭제된 계정은 다시 복구할 수 없고 계정의 게시물이나 정보는 완전히 삭제된다는 점을 기억해 주세요. 그래도 계정을
-								삭제하려면 '계정 삭제'를 클릭하세요.</p>
-						</div>
-						<form id="form-signout" class="form-horizontal" action="signout"
-							method="post">
-							<input type="hidden" name="email" id="email" value="${email}">
+				<div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
+					<div class="panel-body">
+						<form id="form-join" class="form-horizontal">
 							<div class="form-group">
-								<label for="password" class="col-xs-3">비밀번호</label>
-								<div class="col-xs-4">
-									<input type="text" class="form-control" name="password"
-										id="password">
+								<!-- e-mail -->
+								<label for="email" class="col-xs-3 control-label">e-mail</label>
+								<div class="IH-readonly-text col-xs-6">${member.email}</div>
+							</div>
+							<br>
+							<div class="form-group">
+								<!-- name -->
+								<label for="name" class="col-xs-3 control-label">Name</label>
+								<div class="col-xs-6">
+									<input type="text" class="form-control" name="name"
+										placeholder="Name" value="${member.name}">
 								</div>
 							</div>
-							<button class="btn btn-secondary">계정 삭제</button>
-							<button class="btn btn-secondary">취소</button>
+							<div class="form-group">
+								<!-- gender -->
+								<label for="gender" class="col-xs-3 control-label">Gender</label>
+								<div class="radio">
+									<label for="man" class="col-xs-offset-1"> <input
+										type="radio" name="gender" value="m">Man
+									</label> <label for="woman" class="col-xs-offset-1"> <input
+										type="radio" name="gender" value="w">Woman
+									</label>
+								</div>
+							</div>
+							<div class="form-group">
+								<!-- birth date -->
+								<label for="birthdate" class="col-xs-3 control-label">Birth
+									Date</label>
+								<div class="col-xs-6">
+									<input type="date" class="form-control" name="birthdate"
+										placeholder="Birth Date" value="${member.birthdate}">
+								</div>
+							</div>
+							<div class="form-group">
+								<!-- motto -->
+								<label for="motto" class="col-xs-3 control-label">Motto</label>
+								<div class="col-xs-6">
+									<input type="text" class="form-control" name="motto"
+										placeholder="Motto">
+								</div>
+							</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-success" onclick="join();">저장</button>
+							</div>
 						</form>
-
+					</div>
+				</div>
+			</div>
+			
+			<div class="panel panel-default">
+				<div class="panel-heading" role="tab" id="headingTwo">
+					<h4 class="panel-title"><a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">비밀번호 수정</a></h4>
+				</div>
+				<div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
+					<div class="panel-body">
+						<form id="form-join" class="form-horizontal">
+							<div class="form-group">
+								<!-- old pw -->
+								<label for="currentPassword" class="col-xs-3 control-label">Old
+									Password</label>
+								<div class="col-xs-6">
+									<input type="password" class="form-control"
+										name="currentPassword" placeholder="Old Password">
+								</div>
+							</div>
+							<div class="form-group">
+								<!-- new pw -->
+								<label for="changePassword" class="col-xs-3 control-label">New
+									Password</label>
+								<div class="col-xs-6">
+									<input type="password" class="form-control" name="changePassword"
+										placeholder="New Password">
+								</div>
+							</div>
+							<div class="form-group">
+								<!-- new pw chk -->
+								<label for="changePasswordChk" class="col-xs-3 control-label">New
+									Password Check</label>
+								<div class="col-xs-6">
+									<input type="password" class="form-control"
+										name="changePasswordChk" placeholder="New Password Check">
+								</div>
+								</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-success" onclick="join();">저장</button>
+							</div>
+							
+						</form>
+					</div>
+				</div>
+			</div>
+			
+			<div class="panel panel-default">
+				<div class="panel-heading" role="tab" id="headingThree">
+					<h4 class="panel-title"><a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="false" aria-controls="collapseThree">회원 탈퇴</a></h4>
+				</div>
+				<div id="collapseThree" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
+					<div class="panel-body">
+						<form id="form-join" class="form-horizontal">
+							<div class="form-group">
+								<!-- old pw -->
+								<label for="currentPassword" class="col-xs-3 control-label">Old
+									Password</label>
+								<div class="col-xs-6">
+									<input type="password" class="form-control"
+										name="currentPassword" placeholder="Old Password">
+								</div>
+							</div>
+						</form>
 					</div>
 				</div>
 			</div>
@@ -150,8 +145,10 @@
 	</div>
 
 	<%@ include file="include/footer.jsp"%>
+	
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+	<script src="assets/js/common.js"></script>
 	<script src="assets/js/mypage.js"></script>
 </body>
 </html>

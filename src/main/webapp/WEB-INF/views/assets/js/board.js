@@ -1,6 +1,6 @@
 $(document).ready(function() {
 	
-	// 썸머노트 이미지 업로드 
+	// 썸머노트 이미지 업로드  1
 	$('.content').summernote({
     	lang: 'ko-KR',
     	height: 500,
@@ -29,7 +29,7 @@ $(document).ready(function() {
         }
     });
      
-	// summernote img upload
+	// 썸머노트 이미지 업로드  2
 	function uploadSummernoteImageFile(file, el) {
 	var form_data  = new FormData();
 		form_data.append("uploadfile", file);
@@ -84,16 +84,23 @@ $(document).ready(function() {
 		});
 	});
 	
-
-
 	// 비회원 비밀번호 확인
-	$('.button-nonMember-PwChk').click(function(){
-   // 아무값없이 띄어쓰기만 있을 때도 빈 값으로 체크되도록 trim() 함수 호출
-       if ($('#pwd').val().trim() == '') {
-        alert('비밀번호를 입력해주세요');
-        $('#pwd').focus();
-    	}else{
-    		$('#form-nonMember-PwChk').submit();
-    	}
-  	});
- });
+	//$('.button-nonMember-PwChk').click(function(){
+    // 아무값없이 띄어쓰기만 있을 때도 빈 값으로 체크되도록 trim() 함수 호출
+    //   if ($('#pwd').val().trim() == '') {
+    //    alert('비밀번호를 입력해주세요');
+    //   $('#pwd').focus();
+    //	}else{
+    //		$('#form-nonMember-PwChk').submit();
+    //	}
+  	//});
+
+	
+});	
+	
+	
+	
+	
+	
+	
+	

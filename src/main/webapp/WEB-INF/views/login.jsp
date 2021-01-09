@@ -16,6 +16,7 @@
 	<link rel="stylesheet" href="assets/css/login.css" type="text/css">
 </head>
 <body>
+	<%@ include file="include/header.jsp" %>
 	<!-- join modal -->
 	<div class="modal fade" id="modal-join">
 		<div class="modal-dialog">
@@ -242,6 +243,7 @@
 
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+	<script src="assets/js/common.js"></script>
 	<script src="assets/js/login.js"></script>
 </body>
 </html>

@@ -21,12 +21,15 @@ public interface BoardReplyService {
 	
 	
 	/**대댓글*/
-	// 댓글  순번 업데이트
-	public int replySeqUpdate(Board_reply input) throws Exception;
+	// 자식 순번 가져오기
+	public Board_reply getChildrenSeq(int input) throws Exception;
+	// MAX 순번 가져오기
+	public int replyMaxSeq(int input) throws Exception;
 	// 댓글 삭제후 댓글 순번 재정렬
-	public int deleteReplySeqUpdate(Board_reply input) throws Exception;
+	public int deleteReplySeqUpdate(int input) throws Exception;
     // 자식 조회
 	public int getReplyChildren(int input) throws Exception;
-	
+	// 같은 순번일 경우 +1
+	public int replySeqRearrange(Board_reply input) throws Exception;
 
 }

@@ -1,15 +1,5 @@
 @charset "UTF-8";
 
-#changePwForm, #changeNameForm {
-	padding: 50px 10px 10px 10px;
-}
-
-.item {
-	border-radius: 20px;
-	border: 1px solid #7f8286a8;
-	margin-top: 55px;
-}
-
-.item>div {
-	padding: 50px;
+.IH-readonly-text {
+	margin-top: 6px;
 }

@@ -1,9 +1,4 @@
-/**
- * 
- */
 // mypage : 현재비밀번호 검사
-
-
 $('#currentPasswordChk').click(function(){
 	if($('#currentPassword').val() != ''){
 		$.ajax({
