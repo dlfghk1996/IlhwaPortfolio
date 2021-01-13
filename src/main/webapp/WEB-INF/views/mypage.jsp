@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page trimDirectiveWhitespaces="true"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ page isELIgnored="false"%>
 <!DOCTYPE html>
 <html lang="ko">
@@ -38,36 +39,27 @@
 								<!-- name -->
 								<label for="name" class="col-xs-3 control-label">Name</label>
 								<div class="col-xs-6">
-									<input type="text" class="form-control" name="name"
-										placeholder="Name" value="${member.name}">
+									<input type="text" class="form-control" name="name" placeholder="Name" value="${member.name}">
 								</div>
 							</div>
 							<div class="form-group">
 								<!-- gender -->
 								<label for="gender" class="col-xs-3 control-label">Gender</label>
 								<div class="radio">
-									<label for="man" class="col-xs-offset-1"> <input
-										type="radio" name="gender" value="m">Man
-									</label> <label for="woman" class="col-xs-offset-1"> <input
-										type="radio" name="gender" value="w">Woman
+									<label for="man" class="col-xs-offset-1">
+										<input type="radio" name="gender" value="m" <c:if test="${member.gender == 'm'}">checked</c:if>>Man
+									</label> 
+									<label for="woman" class="col-xs-offset-1">
+										<input type="radio" name="gender" value="f" <c:if test="${member.gender == 'f'}">checked</c:if>>Woman
 									</label>
 								</div>
 							</div>
 							<div class="form-group">
 								<!-- birth date -->
-								<label for="birthdate" class="col-xs-3 control-label">Birth
-									Date</label>
+								<label for="birthdate" class="col-xs-3 control-label">BirthDate</label>
 								<div class="col-xs-6">
-									<input type="date" class="form-control" name="birthdate"
-										placeholder="Birth Date" value="${member.birthdate}">
-								</div>
-							</div>
-							<div class="form-group">
-								<!-- motto -->
-								<label for="motto" class="col-xs-3 control-label">Motto</label>
-								<div class="col-xs-6">
-									<input type="text" class="form-control" name="motto"
-										placeholder="Motto">
+									<fmt:parseDate value="${member.birthdate}" var="birthdate" pattern="yyyy-MM-dd HH:mm:ss.S"/>
+									<input type="date" class="form-control" name="birthdate" value="<fmt:formatDate value='${birthdate}' pattern='yyyy-MM-dd'/>">
 								</div>
 							</div>
 							<div class="modal-footer">
@@ -87,29 +79,23 @@
 						<form id="form-join" class="form-horizontal">
 							<div class="form-group">
 								<!-- old pw -->
-								<label for="currentPassword" class="col-xs-3 control-label">Old
-									Password</label>
+								<label for="currentPassword" class="col-xs-3 control-label">기존 비밀번호</label>
 								<div class="col-xs-6">
-									<input type="password" class="form-control"
-										name="currentPassword" placeholder="Old Password">
+									<input type="password" class="form-control" name="currentPassword" placeholder="Old Password">
 								</div>
 							</div>
 							<div class="form-group">
 								<!-- new pw -->
-								<label for="changePassword" class="col-xs-3 control-label">New
-									Password</label>
+								<label for="changePassword" class="col-xs-3 control-label">새로운 비밀번호</label>
 								<div class="col-xs-6">
-									<input type="password" class="form-control" name="changePassword"
-										placeholder="New Password">
+									<input type="password" class="form-control" name="changePassword" placeholder="New Password">
 								</div>
 							</div>
 							<div class="form-group">
 								<!-- new pw chk -->
-								<label for="changePasswordChk" class="col-xs-3 control-label">New
-									Password Check</label>
+								<label for="changePasswordChk" class="col-xs-3 control-label">새로운 비밀번호 확인</label>
 								<div class="col-xs-6">
-									<input type="password" class="form-control"
-										name="changePasswordChk" placeholder="New Password Check">
+									<input type="password" class="form-control" name="changePasswordChk" placeholder="New Password Check">
 								</div>
 								</div>
 							<div class="modal-footer">

@@ -8,8 +8,6 @@ import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -23,7 +21,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.view.AbstractView;
 
 import com.kim.ilhwaportfolio.dto.BoardFile;
@@ -116,7 +113,7 @@ public class FileUtils  extends AbstractView {
 		out.flush();
 	}
 
-	/** 파일 삭제 처리 */
+	/** 4. 파일 삭제 처리 */
 	// 파일 삭제처리 메서드 
 	 public boolean fileDelete(List<BoardFile> boardfile)throws Exception { 
 		 boolean result = true;
@@ -132,7 +129,7 @@ public class FileUtils  extends AbstractView {
 		 return true;
 	}
 	 
-	 /** 이미지 업로드 */
+	 /** 5. 본문 이미지 삭제 */
 	 public boolean findImgPath(String imgstr) {
 		 boolean result = true;
 		 Pattern ingPattern = Pattern.compile("<img[^>]*src=[\"']?([^>\"']+)[\"']?[^>]*>");

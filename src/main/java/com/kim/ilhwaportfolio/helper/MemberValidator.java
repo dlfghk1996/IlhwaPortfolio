@@ -1,21 +1,16 @@
 package com.kim.ilhwaportfolio.helper;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.regex.Pattern;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
 
 import com.kim.ilhwaportfolio.dto.Member;
-import com.sun.org.apache.xerces.internal.impl.xpath.regex.ParseException;
+
 
 @Component
 public class MemberValidator implements Validator{
@@ -98,7 +93,7 @@ public class MemberValidator implements Validator{
 		        //예)2007 ~ 1921(시작~까지) 나이만 신청
 		        Calendar current = Calendar.getInstance();
 		        // 회원 나이
-		        int memberAge = current.get(Calendar.YEAR) - Integer.parseInt(member.getBirthdate().substring(0, 3));
+		        int memberAge = current.get(Calendar.YEAR) - Integer.parseInt(member.getBirthdate().substring(0,4));
 		        if(!(memberAge >= 14) || !(memberAge <= 100)){
 		        	System.out.println("연령제한");
 		        	errors.rejectValue("birthdate", "Limit.member.birthdate");

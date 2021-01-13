@@ -1,7 +1,5 @@
 package com.kim.ilhwaportfolio.dto;
 
-import java.util.Date;
-
 import org.springframework.stereotype.Repository;
 
 @Repository

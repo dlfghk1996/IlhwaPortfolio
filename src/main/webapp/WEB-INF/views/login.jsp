@@ -44,7 +44,7 @@
 						<div class="form-group">
 							<!-- pw chk -->
 							<label for="passwordChk" class="col-xs-3 control-label">Password Check</label>
-							<div class="col-xs-6"><input type="password" class="form-control" name="passwordChk" placeholder="Password Check"></div>
+							<div class="col-xs-6"><input type="password" class="form-control" id="passwordChk" placeholder="Password Check"></div>
 						</div>
 						<br>
 						<div class="form-group">
@@ -60,7 +60,7 @@
 									<input type="radio" name="gender" value="m" checked>Man
 						  		</label>
 								<label for="woman" class="col-xs-offset-1">
-									<input type="radio" name="gender" value="w">Woman
+									<input type="radio" name="gender" value="f">Woman
 						  		</label>
 							</div>
 						</div>
@@ -70,14 +70,9 @@
 							<div class="col-xs-6"><input type="date" class="form-control" name="birthdate" placeholder="Birth Date"></div>
 						</div>
 						<div class="form-group">
-							<!-- motto -->
-							<label for="motto" class="col-xs-3 control-label">Motto</label>
-							<div class="col-xs-6"><input type="text" class="form-control" name="motto" placeholder="Motto"></div>
-						</div>
-						<div class="form-group">
 							<div class="checkbox">
 								<span class="col-xs-offset-7">I agree to the terms.</span>
-								<input type="checkbox" class="col-xs-2" value="y">
+								<input type="checkbox" class="col-xs-2" id="joinAgree">
 							</div>
 						</div>
 					</div>
@@ -193,7 +188,7 @@
 							<div class="form-group">
 								<!-- New Password -->
 								<label for="newPassword" class="col-xs-4 control-label">New Password</label>
-								<div class="col-xs-6"><input type="password" class="form-control" name="password" placeholder="password" id="New Password"></div>
+								<div class="col-xs-6"><input type="password" class="form-control" name="password" placeholder="password" id="newPassword"></div>
 							</div>
 							<div class="form-group">
 								<!-- PasswordConfirm -->
@@ -243,6 +238,7 @@
 
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+	<script type="text/javascript" src="https://cdn.jsdelivr.net/jquery.validation/1.16.0/jquery.validate.min.js"></script>
 	<script src="assets/js/common.js"></script>
 	<script src="assets/js/login.js"></script>
 </body>

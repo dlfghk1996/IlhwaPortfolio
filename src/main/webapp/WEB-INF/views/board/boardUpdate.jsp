@@ -27,41 +27,43 @@
 </head>
 <body>
 <%@ include file="../include/header.jsp" %>
-<div class="container-fluid text-center">
-	<div class="row">
-		<h1>자유게시판</h1>
-	   <form id="boardForm" method="POST" action="updateContent" enctype="multipart/form-data">
-	   	<input type="hidden" name="boardnum" value="${board.boardnum}">
-			<div class="form-group">
-    			<label for="subject">제목</label>
-    			<input type="text" class="form-control" id="subject" name="subject" maxlength="32" value="${board.subject}">
-  			</div>
-  			<div class="form-group">
-  			    <!-- 첨부 파일 -->
-    			<label for="file">첨부파일</label>
-    			<input type="file" class="form-control multi" id="file" name="file">
-    			<!-- 첨부파일 리스트 -->
-				<ul id="uploadList">
-  					<c:if test="${not empty boardfile }">
-  					<c:forEach items="${boardfile}" var="b">
-  						<li>
-  							<!-- 기존파일 input:hidden -->
-  							<input type="hidden" name="files" value="${b.filenum}"> 
-  							<a href="#" class="fileDeleteBtn" data-value=" ${b.filenum}" data-value2="${b.filepath}">
-  							    [삭제]&nbsp;&nbsp; ${b.originalfilename}
-  							</a>
-  						</li>
-  					</c:forEach>
-  				    </c:if>
-    			</ul>
+	<div class="container-fluid text-center">
+		<div class="row">
+			<h1>자유게시판</h1>
+			<form id="boardForm" method="POST" action="updateContent" enctype="multipart/form-data">
+			   	<input type="hidden" name="boardnum" value="${board.boardnum}">
+				<div class="form-group">
+					<label for="subject">제목</label>
+		    		<input type="text" class="form-control" id="subject" name="subject" maxlength="32" value="${board.subject}">
+		  		</div>
+		  		<div class="form-group">
+	  			    <!-- 첨부 파일 -->
+	    			<label for="file">첨부파일</label>
+	    			<input type="file" class="form-control multi" id="file" name="file">
+	    			<!-- 첨부파일 리스트 -->
+					<ul id="uploadList">
+	  					<c:if test="${not empty boardfile}">
+		  					<c:forEach items="${boardfile}" var="b">
+		  						<li>
+		  							<!-- 기존파일 input:hidden -->
+		  							<input type="hidden" name="files" value="${b.filenum}"> 
+		  							<a href="#" class="fileDeleteBtn" data-value="${b.filenum}" data-value2="${b.filepath}">
+		  							    [삭제]&nbsp;&nbsp; ${b.originalfilename}
+		  							</a>
+		  						</li>
+		  					</c:forEach>
+	  				    </c:if>
+	    			</ul>
 				</div>
-  				<textarea name="content" id="summernote" class="content">${board.content}</textarea>
-			<div class="row">
-				<div class="col-md-1"><button type="submit" class="btn btn-success">등록</button></div>
-			</div>
-	   </form>
+		  		<textarea name="content" id="summernote" class="content">${board.content}</textarea>
+				<div class="row">
+					<div class="col-md-1">
+						<button type="submit" class="btn btn-success">등록</button>
+					</div>
+				</div>
+		   </form>
+		</div>
 	</div>
-</div>
 <%@ include file="../include/footer.jsp" %>
 
 

@@ -83,9 +83,8 @@ public class BoardController {
 
 	/** 글쓰기 do */
 	@RequestMapping(value = "postContent", method = RequestMethod.POST)
-	// @RequestParam(required=false) MultipartHttpServletRequest file
-	//
 	public String postContent(Board board, List<MultipartFile> file) throws Exception {
+		
 		/** 세션에 저장 되어 있는 현재 로그인 되어있는 사용자의 memberkey를 가지고 온다. */
 		Member member = (Member) webHelper.getSession("members", null);
 		// 회원/비회원 일 구분
@@ -113,6 +112,7 @@ public class BoardController {
 	/** 상세 게시글 보기 */
 	@RequestMapping(value = "boardView", method = RequestMethod.GET)
 	public String viewContent(@RequestParam("boardnum") int boardnum, Model model) throws Exception {
+		
 		Board board = boardService.viewContent(boardnum);
 		if (board == null) {
 			System.out.println("예외처리 실행");
@@ -133,16 +133,13 @@ public class BoardController {
 
 	/** 글 수정 페이지 회원 */
 	@RequestMapping(value = "boardUpdate", method = RequestMethod.POST)
-	public String boardUpdate(@RequestParam(value = "boardnum", required = false, defaultValue = "0") int boardnum, Board board,
-			Model model, HttpServletRequest request) throws Exception {
-
+	public String boardUpdate(Board board, Model model, HttpServletRequest request) throws Exception {
 
 		// 회원 수정
 		Member member = (Member) webHelper.getSession("members", "");
-		Board board1 = boardService.viewContent(boardnum);
 		// 회원의 수정 페이지  접근권한 확인
 		if(member != null) {
-			if (member.getMembernum() != board1.getWriter()) {
+			if (member.getMembernum() != board.getWriter()) {
 				webHelper.redirect("접근권한이 없습니다.");
 			}
 		// 비회원 수정페이지 접근 권한 확인
@@ -151,12 +148,10 @@ public class BoardController {
 			if(board == null) {
 				webHelper.redirect("접근권한이 없습니다.");
 			}
-			boardService.viewContent(board.getBoardnum());
 		}
 		
-
 		// 첨부파일 목록 
-		List<BoardFile> boardfile = boardService.attachFileList(boardnum);
+		List<BoardFile> boardfile = boardService.attachFileList(board.getBoardnum());
 		if (boardfile != null) {
 			model.addAttribute("boardfile", boardfile);
 		}
@@ -167,6 +162,7 @@ public class BoardController {
 	/** 글 수정 do */
 	@RequestMapping(value = "updateContent", method = RequestMethod.POST)
 	public String updateContent(Board board, MultipartHttpServletRequest request) throws Exception {
+		
 		List<MultipartFile> fileList = request.getFiles("file");
 		// 첨부파일 업데이트
 		FileUtils fileUtils = new FileUtils();
@@ -185,35 +181,36 @@ public class BoardController {
 		return "redirect:boardView?boardnum=" + board.getBoardnum();
 	}
 
-	/** 게시글 삭제 전 첨부파일 삭제*/
+	/** 게시글 삭제 */
 	@RequestMapping(value = "deleteContent", method = RequestMethod.POST)
 	public String deleteContent(Board board) throws Exception {
-		// System.out.println("deleteContent 서블릿 들어왔음");
+		
 		Member member = (Member) webHelper.getSession("members", null);
 		
-		// 세션에 로그인이 안되어있을 경우
+		// 세션에 로그인이 안되어있을 경우 -> 비회원 비밀번호 확인
 		if(member == null) {
 			board = boardService.nonMemberPwChk(board);
 			if(board == null) {
 				webHelper.redirect("접근권한이 없습니다.");
 			}
+		// 세션에 저장된 회원정보와 게시글 작성자 pk 비교
 		}else {
 			if (member.getMembernum() != board.getWriter()) {
 				webHelper.redirect("접근권한이 없습니다.");
 			}
 		}
+		/**게시글 삭제 전 첨부파일 및 본문 이미지 삭제*/
 		// 첨부파일 삭제
 		List<BoardFile> boardFile= boardService.attachFileList(board.getBoardnum());
 		if(!boardFile.isEmpty()) {
 			if(fileUtils.fileDelete(boardFile)) {
 				boardService.attachFileDelete(boardFile.get(0));
-				System.out.println("에러 찾기2");
 			}else {
 				System.out.println("파일 삭제 예외처리");
 			}
 		}
-
-		boolean result = fileUtils.findImgPath(board.getContent());
+        // 본문 이미지 삭제
+		fileUtils.findImgPath(board.getContent());
 		boardService.deleteContent(board);
 		
 		return "redirect:board";
@@ -223,6 +220,7 @@ public class BoardController {
 	@ResponseBody
 	@RequestMapping(value = "imgUpload", method = RequestMethod.POST)
 	public String imgUpload(MultipartHttpServletRequest request) throws Exception {
+		
 		List<MultipartFile> fileList = request.getFiles("uploadfile");
 		FileUtils fileUtils = new FileUtils();
 		String filename = fileUtils.uploadFile(fileList);
@@ -259,13 +257,18 @@ public class BoardController {
 	@RequestMapping(value = "replyWrite", method = RequestMethod.POST)
 	@ResponseBody
 	public String replyWrite(Board_reply board_reply) throws Exception {
+		
+		// 대댓글 인 경우 
 		if(board_reply.getParent() != 0) {
+			// 부모 depth+1,형제 댓글의 MAX(seq) 를 가져온다.  
 			Board_reply childReply = boardReplyService.getChildrenSeq(board_reply.getParent());
+			// 등록할려는 댓글객체의 필드에 삽입한다.
 			board_reply.setDepth(childReply.getDepth());
 			board_reply.setSeq(childReply.getSeq());
 			// 기존 순번이 현재 순번과 같거나 클경우 +1 을 해준다.
 			boardReplyService.replySeqRearrange(board_reply);
 		}else {
+		// 댓글인 경우
 			int maxseq = boardReplyService.replyMaxSeq(board_reply.getReply_boardnum());
 			board_reply.setSeq(maxseq);
 		}
@@ -277,8 +280,8 @@ public class BoardController {
 	/** 댓글 목록 : */
 	// json 데이터를 리턴
 	@RequestMapping(value = "replyList", method = RequestMethod.GET)
-	@ResponseBody
-	public Map<String, Object> replyList(@RequestParam int boardnum) throws Exception {
+	public @ResponseBody Map<String, Object> replyList(@RequestParam int boardnum) throws Exception {
+		
 		List<Board_reply> replyList = boardReplyService.getReplyList(boardnum);
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("replyList", replyList);
@@ -286,10 +289,8 @@ public class BoardController {
 	}
 
 	/** 댓글 (삭제/ 수정) 시  비밀번호 확인 */
-	// json 데이터를 리턴
 	@RequestMapping(value = "replyPwCheck", method = RequestMethod.POST)
-	@ResponseBody
-	public int replyPwCheck(@RequestBody Map<String, String> parm) throws Exception {
+	public @ResponseBody int replyPwCheck(@RequestBody Map<String, String> parm) throws Exception {
 		
 		Board_reply board_reply = new Board_reply();
 		board_reply.setReplynum(Integer.parseInt(parm.get("replynum")));
@@ -299,41 +300,46 @@ public class BoardController {
 		// 댓글의 비밀번호 확인
 		Board_reply reply = boardReplyService.replyPwCheck(board_reply);
 		if (reply != null) {
+			// 삭제를 위한 비밀번호 확인 일 경우
 			if (parm.get("value").equals("delete")) {
+				// 삭제할려는 댓글의 자식댓글 유무를 확인한다.
 				int numberofChildren = boardReplyService.getReplyChildren(reply.getReplynum());
+				// 자식댓글이 있는 경우, 해당 댓글과 자식댓글까지 전부 삭제한다.
 				if(numberofChildren > 0) {
-					System.out.println("들어옴");
 					boardReplyService.parentReplyDelete(reply.getReplynum());
+				// 자식댓글이 없는 경우, 해당 댓글만 삭제한다.
 				}else {
 					//boardReplyService.deleteReplySeqUpdate(reply.getReplynum());
 					boardReplyService.replyDelete(reply.getReplynum());
 				}
 			}
-		replyPwCheckResult = 1;
+			replyPwCheckResult = 1;
 		}
 		return replyPwCheckResult;
 	}
 
 	/** 댓글 수정 */
 	@RequestMapping(value = "replyUpdate", method = RequestMethod.POST)
-	@ResponseBody
-	public int replyUpdate(@RequestBody Board_reply board_reply) throws Exception {
-		System.out.println(board_reply.toString());
+	public @ResponseBody int replyUpdate(Board_reply board_reply) throws Exception {
+		
 		int replyUpdateResult = boardReplyService.replyUpdate(board_reply);
 		return replyUpdateResult;
 	}
 
 	/** 회원 댓글 삭제 */
 	@RequestMapping(value = "memberReplyDelete", method = RequestMethod.POST, produces = "application/json; charset=utf8")
-	@ResponseBody
-	public int memberReplyDelete(@RequestParam("replynum") int replynum) throws Exception {
+	public @ResponseBody int memberReplyDelete(@RequestParam("replynum") int replynum) throws Exception {
+		// 삭제할려는 댓글의 자식댓글 유무를 확인한다.
 		int numberofChildren = boardReplyService.getReplyChildren(replynum);
+		int result = 0;
 		if(numberofChildren > 0) {
-			boardReplyService.parentReplyDelete(replynum);
+			// 자식댓글이 있는 경우, 해당 댓글과 자식댓글까지 전부 삭제한다.
+			result = boardReplyService.parentReplyDelete(replynum);
 		}else {
+			// 자식댓글이 없는 경우, 해당 댓글만 삭제한다.
 			//boardReplyService.deleteReplySeqUpdate(replynum);
-			boardReplyService.replyDelete(replynum);
+			result = boardReplyService.replyDelete(replynum);
 		}
-		return 0;
+		return result;
 	}
 }

@@ -58,7 +58,7 @@
 	
 	<!-- 게시글 수정 -->
 	<update id="updateContent">
-		UPDATE board SET subject = #{subject},content = #{content},edidate=sysdate  WHERE boardnum = #{boardnum}
+		UPDATE board SET subject = #{subject},content = #{content},edidate = sysdate WHERE boardnum = #{boardnum}
 	</update>
 	
 	<!-- 비회원 게시글 수정 비밀번호 -->

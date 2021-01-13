@@ -1,10 +1,15 @@
 
+// madal 닫힐 때 form > input 초기화
+$('.modal').on('hidden.bs.modal', function(e){
+  $(this).find('form')[0].reset()
+}); 
 
+// 로그인
 $(function(){
-  jQuery.validator.addMethod("noSpace", function(value, element) {
+  $.validator.addMethod("noSpace", function(value, element) {
 		return value.indexOf(" ") < 0 && value != ""; 
 		}, "공백을 입력하실수 없습니다.");
-	$("#form-login").validate({
+	$('#form-login').validate({
 		rules:{
 			email:{
 				required : true, //필수입력여부
@@ -18,27 +23,15 @@ $(function(){
 		},
 		messages:{
 			email:{
-				required : "이메일은 필수 입력입니다.",
-				email : "잘못된 형식 입니다."
+				required : '이메일은 필수 입력입니다.',
+				email : '잘못된 형식 입니다.'
 			},
 			password: {
-				required : "비밀번호는 필수 입력입니다.",
+				required : '비밀번호는 필수 입력입니다.',
 			},
 		}
 	})
 });
-
-
-
-
-
-
-
-
-// madal 닫힐 때 form > input 초기화
-$('.modal').on('hidden.bs.modal', function(e){
-  $(this).find('form')[0].reset()
-}); 
 
 // 이메일 찾기 화면 바꾸는 변수
 var findemailform;
@@ -47,6 +40,7 @@ var dupleCheckedID = "";
 	
 // 회원가입	
 function join(){
+
 	// id 중복 검사 여부 확인
 	if($('#emailDuplChkAction').val() != 'y' || $('#email').val() != dupleCheckedID){
 		alert('이메일 중복 검사가 필요합니다.');
@@ -54,7 +48,20 @@ function join(){
 		return false;
 	}
 	
-    $.ajax({
+	// 비밀 번호 일치 체크 확인
+	if($('#password').val() != $('#passwordChk').val()){
+		alert('비밀번호가 일치하지않습니다.');
+		$('#passwordChk').eq(0).focus();
+		return false;
+	}
+	
+	// 동의 체크 확인
+	if(!$('#joinAgree').is(":checked")){
+		alert('약관에동의해 주세요');
+		return false;
+	}
+    
+	$.ajax({
         url : 'join',
         type : 'POST',
         data : $('#form-join').serialize(),
@@ -180,7 +187,7 @@ function resetPassword(){
 	if($('#newPassword').val() == $('#confirmPassword').val()){
 		  $.ajax({
 			  url : 'resetPassoword',
-			  data :  {password : $('#newPassword').val()},
+			  data : {password : $('#newPassword').val()},
 	          type : 'POST',
 	          success: function(response){
 	        	  var message  = response.result == -1 ? "비밀번호는 영문, 숫자, 특수기호 포함되어야 합니다." : response.result == 1 ? "비밀번호가 변경되었습니다." : "비밀번호 변경에 실패하였습니다.";

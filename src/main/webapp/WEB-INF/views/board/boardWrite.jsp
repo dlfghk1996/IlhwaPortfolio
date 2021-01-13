@@ -27,11 +27,10 @@
 </head>
 <body>
 <%@ include file="../include/header.jsp" %>
-		<!-- 새 글 작성 -->
 <div class="container">
 	 <div class="row">
-	 <form id="boardForm" method="POST" action="postContent" enctype="multipart/form-data">
-	 	<c:set var ="memberDTO" value="${members}" />
+	 	<form id="boardForm" method="POST" action="postContent" enctype="multipart/form-data">
+	 		<c:set var ="memberDTO" value="${members}"/>
 			<c:if test="${memberDTO == null}">
 				 <div class="form-group">
 					<!-- 회원이 아닌경우 -->
@@ -55,8 +54,12 @@
   			</div>
 			<textarea name="content" id="summernote" class="content"></textarea>
 			<div class="row">
-				<div class="col-md-offset-10 col-md-1"><button type="button" class="btn btn-primary">목록</button></div>
-				<div class="col-md-1"><button type="submit" class="btn btn-success">등록</button></div>
+				<div class="col-md-offset-10 col-md-1">
+					<button type="button" class="btn btn-primary">목록</button>
+				</div>
+				<div class="col-md-1">
+					<button type="submit" class="btn btn-success">등록</button>
+				</div>
 			</div>
 		</form>
 	</div>

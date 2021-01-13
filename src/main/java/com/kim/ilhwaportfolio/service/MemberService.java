@@ -2,7 +2,6 @@ package com.kim.ilhwaportfolio.service;
 
 import java.util.List;
 
-import com.kim.ilhwaportfolio.dto.Board_reply;
 import com.kim.ilhwaportfolio.dto.Member;
 
 public interface MemberService {

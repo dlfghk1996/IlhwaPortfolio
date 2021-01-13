@@ -63,7 +63,7 @@ public class MailSend {
 			// 수신자 설정 (여러 사람일 경우 setRecipients)
 			msg.setRecipient(Message.RecipientType.TO, to);
 			// 메일 제목 
-			msg.setSubject("[ NextLine ] 비밀번호 찾기 : 임시비밀번호를 확인해주세요. ");
+			msg.setSubject("[ ilhwa-portfolio ] 비밀번호 찾기 : 임시비밀번호를 확인해주세요. ");
 			// 메일 내용 입력
 			msg.setText(this.tempPw,"UTF-8");
 			// 최종적으로 메일 발송

@@ -2,24 +2,16 @@ package com.kim.ilhwaportfolio.helper;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.HashMap;
+
 import java.util.Map;
 
-import javax.servlet.ServletContainerInitializer;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpRequest;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
-import org.springframework.web.context.request.ServletWebRequest;
 
 import com.kim.ilhwaportfolio.dto.Member;
 
@@ -30,7 +22,8 @@ public class WebHelper {
 	private String encType;
 	private int start;
 	private int end;
-
+	private Map<String, Object> map;
+	
 	public int getEnd() {
 		return end;
 	}
@@ -50,8 +43,6 @@ public class WebHelper {
 	public String getEncType() {
 		return encType;
 	}
-
-	private Map<String, Object> map;
 
 	public void setEncType(String encType) {
 		this.encType = encType;

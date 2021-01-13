@@ -25,191 +25,211 @@
 
 <body>
 <%@ include file="../include/header.jsp" %>
-<div class="container-fluid text-center">
-<form id="content-form" method="post">
-	<input type="hidden" value='${board.content}' name="content"> 
-	<input type="hidden" value="${board.boardnum}" name="boardnum">
-	<input type="hidden" value="${board.writer}" name="writer">
-</form>
-	<div class="row">
-		<h1>자유게시판</h1>
-		<div class="panel-group">
-			<div class="panel panel-default">
-				 <!-- 조회수, 댓글 수, 글제목, 작성자  -->
-				 <div class="panel-heading">
-				 	<h3>${board.subject}</h3>
-				 	<div class="contentInfo1">
-				 		<span>${board.writer}</span>
-				 		<span>작성자이름   &nbsp; | ${board.regdate}</span>
-				 	</div>
-				 	<div class="contentInfo2">
-				 		<ul>
-				 			<li><span>조회  &nbsp;&nbsp;</span>${board.readnum}</li>
-				 		</ul>
-				 	</div>
-				 </div>
-				 <div>
-				 	<ul>	
-				 	<c:if test="${not empty attachFileList}">
-				 	 	<c:forEach items="${attachFileList}" var="filelist">
-							<li><a href="attachFileDownload?filepath=${filelist.filepath}">${filelist.originalfilename}</a></li>
-						</c:forEach>
-				 	 </c:if> 
-				 	 </ul>
-				 </div>
-				 <!-- 글 내용 -->
-      			 <div class="panel-body">
-      			 	<p>${board.content}</p>	
-      			 </div>
-      			
-				 <c:if test="${members.membernum eq board.writer && not empty members.membernum}">
-				 	<button type="button" value="update" class="btn btn-info pull-righ button-contentOption">글 수정</button>
-				 	<button type="button" value="delete" class="btn btn-secondary pull-righ button-contentOption" >글 삭제</button>
-				 </c:if>
-				  <!-- 비회원 일경우  비밀번호 입력-->
-      			 <c:if test="${not empty board.pwd}">
-					<button type="button" data-value="update" class="btn btn-success pull-right" data-toggle="modal" data-target="#modal-nonMember-PwChk">글 수정</button>
-      			 	<button type="button" data-value="delete" class="btn btn-success pull-right" data-toggle="modal" data-target="#modal-nonMember-PwChk">글 삭제</button>
-      			 </c:if>
-			</div>						
-		</div>
-	</div>
-	
-	<!-- Modal -->
-	<div class="modal fade" id="modal-nonMember-PwChk" role="dialog">
-    	<div class="modal-dialog">
-		<!-- Modal content-->
-	      	<div class="modal-content">
-		        <div class="modal-header">
-		          <button type="button" class="close" data-dismiss="modal">&times;</button>
-		          <h4>비밀번호 확인</h4>
-		        </div>
-		        <div class="modal-body" style="padding:40px 50px;">
-		          <form id="form-nonMember-PwChk" role="form" method="post">
-		          	<div class="form-group">
-		              <input type="hidden" name="boardnum" value="${board.boardnum}">
-		              <label for="pwd"><span class="glyphicon glyphicon-eye-open"></span> Password </label>
-		              <input type="password" class="form-control" id="pwd" name="pwd" placeholder="password">
-		            </div>
-					<button type="button" class="btn btn-success btn-block button-nonMember-PwChk" >확인</button>
-		          </form>
-		        </div>
-		        <div class="modal-footer">
-		         	<button type="button" class="btn btn-default" data-dismiss="modal">close</button>
-		        </div>
+	<div class="container-fluid text-center">
+		<form id="content-form" method="post">
+			<input type='hidden' value='${board.content}' name='content'> 
+			<input type="hidden" value="${board.boardnum}" name="boardnum">
+			<input type="hidden" value="${board.writer}" name="writer">
+			<input type="hidden" value="${board.subject}" name="subject">
+		</form>
+		<div class="row">
+			<h1>자유게시판</h1>
+			<div class="panel-group">
+				<div class="panel panel-default">
+				
+					 <!-- 조회수, 댓글 수, 글제목, 작성자  -->
+					 <div class="panel-heading">
+					 	<h3>${board.subject}</h3>
+					 	<div class="contentInfo1">
+					 		<span>${board.writer}</span>
+					 		<span>작성자이름   &nbsp; | ${board.regdate}</span>
+					 	</div>
+					 	<div class="contentInfo2">
+					 		<ul>
+					 			<li><span>조회  &nbsp;&nbsp;</span>${board.readnum}</li>
+					 		</ul>
+					 	</div>
+					 </div>
+					 <div>
+					 	<ul>	
+					 		<c:if test="${not empty attachFileList}">
+					 	 		<c:forEach items="${attachFileList}" var="filelist">
+									<li><a href="attachFileDownload?filepath=${filelist.filepath}">${filelist.originalfilename}</a></li>
+								</c:forEach>
+					 	 	</c:if>
+					 	</ul>
+					 </div>
+					 
+					 <!-- 글 내용 -->
+	      			 <div class="panel-body">
+	      			 	<p>${board.content}</p>	
+	      			 </div>
+	      			
+	      			<!-- 글 수정/ 삭제 버튼 -->
+					 <c:if test="${members.membernum eq board.writer && not empty members.membernum}">
+					 	<button type="button" value="update" class="btn btn-info pull-righ button-contentOption">글 수정</button>
+					 	<button type="button" value="delete" class="btn btn-secondary pull-righ button-contentOption" >글 삭제</button>
+					 </c:if>
+					  <!-- 비회원 일경우  비밀번호 입력-->
+	      			 <c:if test="${not empty board.pwd}">
+						<button type="button" data-value="update" class="btn btn-info pull-right" data-toggle="modal" data-target="#modal-nonMember-PwChk">글 수정</button>
+	      			 	<button type="button" data-value="delete" class="btn btn-secondary pull-right" data-toggle="modal" data-target="#modal-nonMember-PwChk">글 삭제</button>
+	      			 </c:if>
+				</div>						
 			</div>
-  		</div> 
-	</div>
-	
-	<!-- 댓글 -->
-	<form id="reply-form">
-	<c:if test="${members != null}">
-		<input type="hidden" value="${members.membernum}" name="reply_writer">
-		<input type="hidden" value="${members.name}" name="reply_writer_nickname">
-	</c:if>
-	<input type="hidden" value="${board.boardnum}" name="reply_boardnum">
-	<c:if test="${members == null}">
-		<div class="form-group">
-			<div class="form-inline col-xs-6">
-				<label for="reply_writer_nickname" class="col-xs-2">닉네임 :</label>
-      			<div class="col-xs-9"><input type="text" class="form-control " id="reply_writer_nickname" placeholder="닉네임" name="reply_writer_nickname" width="100%" ></div>
-			</div>
-			<div class="form-inline col-xs-6">
-				<label for="reply_password"  class="col-xs-2">Password:</label>
-      			<div class="col-xs-9"><input type="password" class="form-control" id="reply_password" placeholder="password" name="reply_password"></div>
-	   		</div>
-	   	</div>
-	</c:if>
-		<div class="form-group col-xs-12 comment">
-  			<label for="reply" class="col-xs-2">Comment:</label>
-  			<div class="col-xs-8"><textarea class="form-control" rows="3" cols="30" id="reply" name="reply" placeholder="댓글을 입력하세요"></textarea></div>
-  			<button type="button" class="btn btn-default" id="replyBtn">댓글 등록</button>
 		</div>
-	</form>
-	<div class="clear"></div>
 	
-	<ul id="replyprint">
-	<script id="reply-Template" type="text/x-handlebars-template">
-	{{#each.}}
-		{{#if del}}
-			<li><div>삭제된 댓글 입니다.</div></li>
-		{{else}}
-			<li class="reply row" data-depth ="{{depth}}" style="margin-left: calc(20px*{{depth}});">
-					<div class="writerbox col-xs-3"><span>{{reply_writer_nickname}}</span></div>
-					<div class="col-xs-7 reply{{@key}} replyText">{{reply}}</div>
-					<div class="col-xs-2">
-						<div>{{regdate}}</div>
-						<div id="test" class="replyoOptionBox{{@key}}" data-idx="{{replynum}}">
-							{{{buttonFunction reply_writer @key replynum depth}}}
-					</div>
+		<!-- Modal -->
+		<div class="modal fade" id="modal-nonMember-PwChk" role="dialog">
+	    	<div class="modal-dialog">
+			<!-- Modal content-->
+		      	<div class="modal-content">
+			        <div class="modal-header">
+			          <button type="button" class="close" data-dismiss="modal">&times;</button>
+			          <h4>비밀번호 확인</h4>
+			        </div>
+			        <div class="modal-body" style="padding:40px 50px;">
+			          <form id="form-nonMember-PwChk" role="form" method="post">
+			          	<div class="form-group">
+			              <input type="hidden" name="boardnum" value="${board.boardnum}">
+			              <label for="pwd"><span class="glyphicon glyphicon-eye-open"></span>Password</label>
+			              <input type="password" class="form-control" id="pwd" name="pwd" placeholder="password">
+			            </div>
+						<button type="button" class="btn btn-success btn-block button-nonMember-PwChk">확인</button>
+			          </form>
+			        </div>
+			        <div class="modal-footer">
+			         	<button type="button" class="btn btn-default" data-dismiss="modal">close</button>
+			        </div>
 				</div>
-			</li>	
-		{{/if}}
-	{{/each}}
-	</script>
-	</ul>
-	
-	<!-- 비밀번호 확인 -->
-	<div id="password-Chk-form" style="display:none;">
-	    <input type="hidden" name="replynum">
-		<input type="text" id="reply_password-chk" name="reply_password" style="width:200px;">
-    	<button type="button" class="btn btn-default replyPasswordChkBtn">확인</button>                            
-    	<button type="button" class="replyPasswordChkCloseBtn" ><i class="fas fa-window-close"></i></button>
-	</div>
-	
-	<!-- 대댓글 -->
-	<div class="reply-reply-box" style="display:none;"> 
-	 	<div>
-			<form id="reply-reply-form">
-			<input type="hidden" name="parent">
-			<input type="hidden" name="reply_boardnum" value="${board.boardnum}">
+	  		</div> 
+		</div>
+		
+		<!-- 댓글 -->
+		<form id="reply-form">
+			<c:if test="${members != null}">
+				<input type="hidden" value="${members.membernum}" name="reply_writer">
+				<input type="hidden" value="${members.name}" name="reply_writer_nickname">
+			</c:if>
+			<input type="hidden" value="${board.boardnum}" name="reply_boardnum">
 			<c:if test="${members == null}">
 				<div class="form-group">
 					<div class="form-inline col-xs-6">
-						<label for="reply_writer_nickname"></label>
-		      			<input type="text" class="form-control " placeholder="닉네임" name="reply_writer_nickname">
-		      			<label for="reply_password"></label>
-		      			<input type="password" class="form-control" placeholder="password" name="reply_password">
+						<label for="reply_writer_nickname" class="col-xs-2">닉네임 :</label>
+		      			<div class="col-xs-9"><input type="text" class="form-control" id="reply_writer_nickname" placeholder="닉네임" name="reply_writer_nickname" width="100%" ></div>
 					</div>
-					<div><button type="button" class="btn btn-default" id="reply-reply-btn">댓글 등록</button></div>
-				</div>
+					<div class="form-inline col-xs-6">
+						<label for="reply_password"  class="col-xs-2">Password:</label>
+		      			<div class="col-xs-9"><input type="password" class="form-control" id="reply_password" placeholder="password" name="reply_password"></div>
+			   		</div>
+			   	</div>
 			</c:if>
-				<div class="form-group comment">
-		  			<label for="reply"></label>
-		  			<textarea class="form-control" rows="3" cols="30" name="reply" placeholder="댓글을 입력하세요"></textarea>
-				</div>
+			<div class="form-group col-xs-12 comment">
+	  			<label for="reply" class="col-xs-2">Comment:</label>
+	  			<div class="col-xs-8">
+	  				<textarea class="form-control" rows="3" cols="30" id="reply" name="reply" placeholder="댓글을 입력하세요"></textarea>
+	  			</div>
+	  			<button type="button" class="btn btn-default" id="replyBtn">댓글 등록</button>
+			</div>
+		</form>
+		<div class="clear"></div>
+		
+		<ul id="replyprint">
+		<script id="reply-Template" type="text/x-handlebars-template">
+		{{#each.}}
+			{{#if del}}
+				<li><div>삭제된 댓글 입니다.</div></li>
+			{{else}}
+				<li class="reply row" data-depth ="{{depth}}" style="margin-left: calc(20px*{{depth}});">
+					<div class="writerbox col-xs-3"><span>{{reply_writer_nickname}}</span></div>
+					<div class="col-xs-7 reply{{@key}}">{{reply}}</div>
+					<div class="col-xs-2">
+						<div>{{regdate}}</div>
+						<div class="replyoOptionBox{{@key}}" data-idx="{{replynum}}">
+							{{{buttonFunction reply_writer @key replynum depth}}}
+						</div>
+					</div>
+				</li>	
+			{{/if}}
+		{{/each}}
+		</script>
+		</ul>
+		
+		<!-- 댓글 수정 form -->
+		<div id="reply-update-box" style="display:none;">
+			<form id="reply-update-form">
+				<input type="hidden" name="replynum" class="updateReplynum">
+				<div class="form-group">
+	            	<textarea class="form-control updateReply" rows="3" name="reply"></textarea>
+	          	</div>
+	          	<button type="button" class="btn btn-info updateReplyCanclebtn">취소</button>
+	          	<button type="button" class="btn btn-info updateReplybtn">완료</button>
 			</form>
 		</div>
-	</div>
-	<c:choose>
-		<c:when test="${!empty prevNextMap.PREV}">
-			<div>
-			         이전글
-				<a href="boardView?boardnum=${prevNextMap.PREV}">
-					<span>${prevNextMap.PREV}</span>
-					<span>${prevNextMap.PREVSUBJECT}</span>
-				</a>
+		
+		<!-- 비밀번호 확인 -->
+		<div id="password-Chk-form" style="display:none;">
+		    <input type="hidden" name="replynum">
+			<input type="text" id="reply_password-chk" name="reply_password" style="width:200px;">
+	    	<button type="button" class="btn btn-default replyPasswordChkBtn">확인</button>                            
+	    	<button type="button" class="replyPasswordChkCloseBtn" ><i class="fas fa-window-close"></i></button>
+		</div>
+		
+		<!-- 대댓글 -->
+		<div class="reply-reply-box" style="display:none;"> 
+		 	<div>
+		 		<form id="reply-reply-form">
+					<input type="hidden" name="parent">
+					<input type="hidden" name="reply_boardnum" value="${board.boardnum}">
+					<c:if test="${members == null}">
+						<div class="form-group">
+							<div class="form-inline col-xs-6">
+								<label for="reply_writer_nickname"></label>
+				      			<input type="text" class="form-control " placeholder="닉네임" name="reply_writer_nickname">
+				      			<label for="reply_password"></label>
+				      			<input type="password" class="form-control" placeholder="password" name="reply_password">
+							</div>
+							<div><button type="button" class="btn btn-default" id="reply-reply-btn">댓글 등록</button></div>
+						</div>
+					</c:if>
+					<div class="form-group comment">
+			  			<label for="reply"></label>
+			  			<textarea class="form-control" rows="3" cols="30" name="reply" placeholder="댓글을 입력하세요"></textarea>
+					</div>
+				</form>
 			</div>
-		</c:when>
-		<c:otherwise>
-			이전 게시글이 없습니다.
-		</c:otherwise>
-	</c:choose>
-	<c:choose>
-		<c:when test="${!empty prevNextMap.NEXT}">
-			<div>
-				다음글
-				<a href="boardView?boardnum=${prevNextMap.NEXT}">
-					<span>${prevNextMap.NEXT}</span>
-					<span>${prevNextMap.NEXTSUBJECT}</span>
-				</a>
-			</div>
-		</c:when>
-		<c:otherwise>
-			다음 게시글이 없습니다.
-		</c:otherwise>
-	</c:choose>
-</div>	
+		</div>
+		
+		<!-- 이전글/다음글 -->
+		<c:choose>
+			<c:when test="${!empty prevNextMap.PREV}">
+				<div>
+				         이전글
+					<a href="boardView?boardnum=${prevNextMap.PREV}">
+						<span>${prevNextMap.PREV}</span>
+						<span>${prevNextMap.PREVSUBJECT}</span>
+					</a>
+				</div>
+			</c:when>
+			<c:otherwise>
+				이전 게시글이 없습니다.
+			</c:otherwise>
+		</c:choose>
+		<c:choose>
+			<c:when test="${!empty prevNextMap.NEXT}">
+				<div>
+					다음글
+					<a href="boardView?boardnum=${prevNextMap.NEXT}">
+						<span>${prevNextMap.NEXT}</span>
+						<span>${prevNextMap.NEXTSUBJECT}</span>
+					</a>
+				</div>
+			</c:when>
+			<c:otherwise>
+				다음 게시글이 없습니다.
+			</c:otherwise>
+		</c:choose>
+	</div>	
 <%@ include file="../include/footer.jsp" %>
 </body>
 
@@ -218,50 +238,21 @@
 <script src="https://kit.fontawesome.com/58a77f3783.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.7.6/handlebars.min.js"></script>
 <script src="assets/js/boardReply.js"></script>
+<script src="assets/js/boardView.js"></script>
 <script type="text/javascript">
 	//madal 닫힐 때 form > input 초기화
 	$('.modal').on('hidden.bs.modal', function(e){
-  		$(this).find('form')[0].reset()
+	$(this).find('form')[0].reset()
 	}); 
-	
+
 	var boardnum = "<c:out value='${board.boardnum}'/>";
 	getReplies('replyList'); // 댓글 목록 함수 호출 
 	
-    // 회원 게시글 삭제 및 수정
-	$('.button-contentOption').click(function(){
-		var url;
-		if($(this).val() == 'delete'){
-			url = 'deleteContent';
-		}else{
-			url = 'boardUpdate';
-		}
-		$('#content-form').attr('action',url).submit();
-	 });	
 	
-	// 비회원 비밀번호 확인 modal창에  클릭이벤트 data(delete/update) 넘기기
-	  $('#modal-nonMember-PwChk').on('show.bs.modal', function(event) {          
-          var btnValue = $(event.relatedTarget).data('value');
-          $('.button-nonMember-PwChk').attr('value',btnValue);
-	})
-	
-	// 비회원 게시글 삭제 
-	$('.button-nonMember-PwChk').click(function(){
-		if($(this).val() == "delete"){
-			url = 'deleteContent';
-			if(confirm("게시물을 삭제 하시겠습니까? 게시물을 삭제하시면, 해당 게시물의 댓글도 삭제됩니다.")){
-				url = 'deleteContent';		
-			}	
-		}else{
-			url = 'boardUpdate';
-		}
-		$('#form-nonMember-PwChk').attr('action',url).submit();
-	 });	
-
 	// 댓글 삭제 수정 권한 검사
 	Handlebars.registerHelper('buttonFunction', function(reply_writer,index,replynum,depth){
 	var membernum ="<c:out value='${empty members.membernum?0:members.membernum}'/>";
 	
-
 	var update = '<button type="button" value="update" class="btn btn-primary passwordChkBtn" data-key="'+ index +'" data-idx="'+ replynum +'" data-toggle="popover">수정</button>';
 	var del = '<button type="button" value="delete" class="passwordChkBtn" data-key="'+ index +'" data-idx="'+ replynum +'" data-toggle="popover">삭제</button>';
 	var replyAdd ='';
@@ -289,3 +280,7 @@
 	})
 </script>
 </html>
+
+
+
+
